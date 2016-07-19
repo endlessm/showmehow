@@ -37,7 +37,7 @@ def run_in_shell(shell, cmd, env=None):
 def practice_task(task):
     """Practice the task named :task:"""
     for lesson_spec in task["practice"]:
-        print(lesson_spec["task"])
+        print("\n".join(textwrap.wrap(lesson_spec["task"])))
         all_output = ""
         n_failed = 0
         while not re.match(lesson_spec["expected"],
