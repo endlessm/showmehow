@@ -139,7 +139,6 @@ def practice_task(task):
 
 def show_tasks(tasks):
     """Show tasks that can be done in the terminal."""
-    print("Hey, how are you? I can tell you about the following tasks:")
     for task in tasks:
         print("[{task[name]}] - {task[desc]}".format(task=task))
 
@@ -166,7 +165,9 @@ def main(argv=None):
         task = [t for t in tasks if t["name"] == arguments.task][0]
     except IndexError:
         if arguments.task:
-            print("I don't know how to do task {}".format(arguments.task))
+            print_lines_slowly("I don't know how to do task {}".format(arguments.task))
+        else:
+            print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(tasks)
 
     return practice_task(task)
