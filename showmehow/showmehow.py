@@ -48,6 +48,36 @@ _WAIT_MESSAGES = [
     "Fluxing liquid input"
 ]
 
+
+def matches_expected_state(expected, all_output):
+    """True if the expected result happened.
+
+    This can be specified in the JSON file as an object with a
+    type and some arbitrary value. The type will determine which
+    matching function is called.
+    """
+    def regex_matcher(value):
+        """Match against a regex."""
+        return re.match(value, all_output.strip(), flags=re.MULTILINE)
+
+    def command_matcher(value):
+        """Run a command and check if it matches what we expect"""
+        output = subprocess.check_output(value["command"])
+        return re.match(value["output_regex"], output.decode().strip())
+
+
+    matchers = {
+        "regex": regex_matcher,
+        "command": command_matcher
+    }
+
+    try:
+        return matchers[expected["type"]](expected["value"])
+    except KeyError:
+        raise RuntimeError("[Internal Error] No handler for "
+                           "matcher {}".format(expected["type"]))
+
+
 def practice_task(task):
     """Practice the task named :task:"""
     wait_time = 2
@@ -56,9 +86,8 @@ def practice_task(task):
         print("\n".join(textwrap.wrap(lesson_spec["task"])))
         all_output = ""
         n_failed = 0
-        while not re.match(lesson_spec["expected"],
-                           all_output,
-                           flags=re.MULTILINE):
+
+        while not matches_expected_state(lesson_spec["expected"], all_output):
             if n_failed > 0:
                 time.sleep(0.5)
                 print(lesson_spec["fail"])
