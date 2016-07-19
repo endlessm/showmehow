@@ -132,6 +132,8 @@ def practice_task(task):
         time.sleep(0.5)
         print_lines_slowly("\n".join(textwrap.wrap(lesson_spec["success"])))
         print("")
+        if lesson_spec.get("only_continue_on", None) == "enter":
+            input("")
 
     print("---")
     print_lines_slowly("\n".join(textwrap.wrap(task["done"])))
