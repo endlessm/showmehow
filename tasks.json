@@ -83,7 +83,10 @@
         "practice": [
             {
                 "task": "Its pretty difficult to break things on the command line. Try typing gibberish.",
-                "expected": ".*command.*",
+                "expected": {
+                    "type": "regex",
+                    "value": ".*command.*"
+                },
                 "success": "See? Harmless",
                 "fail": "Oops, you actually ended up running something!"
             }
