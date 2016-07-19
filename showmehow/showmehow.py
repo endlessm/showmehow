@@ -38,10 +38,10 @@ def practice_task(task):
     """Practice the task named :task:"""
     for lesson_spec in task["practice"]:
         print(lesson_spec["task"])
-        output = b""
+        all_output = ""
         n_failed = 0
         while not re.match(lesson_spec["expected"],
-                           output.decode(),
+                           all_output,
                            flags=re.MULTILINE):
             if n_failed > 0:
                 print(lesson_spec["fail"])
@@ -56,8 +56,8 @@ def practice_task(task):
                                        env=lesson_spec.get("environment",
                                                            None))
 
-            print(textwrap.indent(output.decode(), "> "))
-            print(textwrap.indent(error.decode(), "> "))
+            all_output = (textwrap.indent(output.decode(), "> ") +
+                          textwrap.indent(error.decode(), "> "))
             n_failed += 1
         
         print("\n".join(textwrap.wrap(lesson_spec["success"])))
