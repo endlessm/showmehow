@@ -77,13 +77,28 @@ def matches_expected_state(expected, all_output):
         raise RuntimeError("[Internal Error] No handler for "
                            "matcher {}".format(expected["type"]))
 
+_PAUSECHARS = ".?!:"
+
+
+def print_lines_slowly(text, newline=True):
+    """Print each character in the line to the standard output."""
+    text = text + " "
+    for ind in range(0, len(text)):
+        sys.stdout.write(text[ind])
+        sys.stdout.flush()
+        time.sleep(0.5 if text[ind] in _PAUSECHARS and
+                   text[ind + 1] == " " else 0.02)
+
+    if newline:
+        sys.stdout.write("\n")
+
 
 def practice_task(task):
     """Practice the task named :task:"""
     wait_time = 2
 
     for lesson_spec in task["practice"]:
-        print("\n".join(textwrap.wrap(lesson_spec["task"])))
+        print_lines_slowly("\n".join(textwrap.wrap(lesson_spec["task"])))
         all_output = ""
         n_failed = 0
 
@@ -101,7 +116,7 @@ def practice_task(task):
                                        input("$ "),
                                        env=lesson_spec.get("environment",
                                                            None))
-                sys.stdout.write(random.choice(_WAIT_MESSAGES))
+                print_lines_slowly(random.choice(_WAIT_MESSAGES), newline=False)
                 for i in range(0, wait_time):
                     sys.stdout.write(".")
                     sys.stdout.flush()
@@ -115,11 +130,11 @@ def practice_task(task):
             n_failed += 1
 
         time.sleep(0.5)
-        print("\n".join(textwrap.wrap(lesson_spec["success"])))
+        print_lines_slowly("\n".join(textwrap.wrap(lesson_spec["success"])))
         print("")
 
     print("---")
-    print("\n".join(textwrap.wrap(task["done"])))
+    print_lines_slowly("\n".join(textwrap.wrap(task["done"])))
 
 
 def show_tasks(tasks):
