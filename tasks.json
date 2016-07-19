@@ -58,5 +58,18 @@
             }
         ],
         "done": "You can read any file that is plain text using `cat`. Try it with files like /etc/resolve.conf"
+    },
+    {
+        "name": "breakit",
+        "desc": "See how it is almost impossible to break anything",
+        "practice": [
+            {
+                "task": "Its pretty difficult to break things on the command line. Try typing gibberish.",
+                "expected": ".*command.*",
+                "success": "See? Harmless",
+                "fail": "Oops, you actually ended up running something!"
+            }
+        ],
+        "done": "Don't be afraid to try new things!"
     }
 ]
