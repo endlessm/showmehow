@@ -9,10 +9,12 @@
 import argparse
 import json
 import os
+import random
 import re
 import subprocess
 import sys
 import textwrap
+import time
 
 
 def interactive_process(shell, env=None):
@@ -34,8 +36,22 @@ def run_in_shell(shell, cmd, env=None):
                                                                 .encode())
 
 
+_WAIT_MESSAGES = [
+    "Wait for it",
+    "Combubulating transistors",
+    "Adjusting for combinatorial flux",
+    "Hacking the matrix",
+    "Exchanging electrical bits",
+    "Refuelling source code",
+    "Fetching arbitrary refs",
+    "Resolving mathematical contradictions",
+    "Fluxing liquid input"
+]
+
 def practice_task(task):
     """Practice the task named :task:"""
+    wait_time = 2
+
     for lesson_spec in task["practice"]:
         print("\n".join(textwrap.wrap(lesson_spec["task"])))
         all_output = ""
@@ -44,6 +60,7 @@ def practice_task(task):
                            all_output,
                            flags=re.MULTILINE):
             if n_failed > 0:
+                time.sleep(0.5)
                 print(lesson_spec["fail"])
             if os.environ.get("NONINTERACTIVE", None):
                 output = "$ ".encode("utf-8")
@@ -55,12 +72,22 @@ def practice_task(task):
                                        input("$ "),
                                        env=lesson_spec.get("environment",
                                                            None))
+                sys.stdout.write(random.choice(_WAIT_MESSAGES))
+                for i in range(0, wait_time):
+                    sys.stdout.write(".")
+                    sys.stdout.flush()
+                    time.sleep(1)
 
-            all_output = (textwrap.indent(output.decode(), "> ") +
-                          textwrap.indent(error.decode(), "> "))
+                wait_time -= 1
+
+            all_output = "\n".join([output.decode(), error.decode()])
+            sys.stdout.write("\n")
+            print(textwrap.indent(all_output, "> "))
             n_failed += 1
-        
+
+        time.sleep(0.5)
         print("\n".join(textwrap.wrap(lesson_spec["success"])))
+        print("")
 
     print("---")
     print("\n".join(textwrap.wrap(task["done"])))
