@@ -92,5 +92,131 @@
             }
         ],
         "done": "Don't be afraid to try new things!"
+    },
+    {
+        "name": "changesetting",
+        "desc": "Escape the terminal and tweak the OS",
+        "practice": [
+            {
+                "task": "Settings for your computer can be controlled with the `gsettings` tool. Lets find out what you can do with `gsettings`.",
+                "expected": {
+                    "type": "regex",
+                    "value": ".*Usage.*"
+                },
+                "success": "The `gsettings` tool just told you about a bunch of `commands`. You can access these commands by providing the command name as an argument to `gsettings`.",
+                "fail": "I thought that you were going to run `gsettings`?"
+            },
+            {
+                "task": "Lets try listing all the categories, called `schemas` on your system.",
+                "expected": {
+                    "type": "regex",
+                    "value": "org.*"
+                },
+                "success": "Those are all the categories. Now lets look at settings you can tweak in your shell.",
+                "fail": "Where are my settings categories? Try running the list-schemas subcommand for gsettings"
+            },
+            {
+                "task": "Lets see how to use the `list-keys` subcommand. You can use the `help` command followed by a sub-command you want help for to see how to use it",
+                "expected": {
+                    "type": "regex",
+                    "value": ".*Usage.*"
+                },
+                "success": "Okay, so gsettings [--schemadir SCHEMADIR] list-keys SCHEMA[:PATH] is how you do it",
+                "fail": "I don't know how to use this list-keys option! Get me some help for it!"
+            },
+            {
+                "task": "Now that we know how to use list-keys, lets list all the settings available on the org.gnome.shell category, or 'schema', as it is called. Pipe it to `sort` to get them in alphabetical order",
+                "expected": {
+                    "type": "regex",
+                    "value": "^always-show-log-out$"
+                },
+                "success": "Interesting.... I wonder what we can play around with here...",
+                "fail": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-schemas on org.gnome.shell using gsettings and then pipe (|) the output to `sort`?"
+            },
+            {
+                "task": "Lets disable the social bar! The social bar's setting is enable-social-bar and it is a `boolean` setting, meaning it is either 'true' or 'false'. I checked `gsettings help set` for you and it said you can use the `set` command to change a setting with gsettings [--schemadir SCHEMADIR] set SCHEMA[:PATH] KEY VALUE",
+                "expected": {
+                    "type": "command",
+                    "value": {
+                        "command": ["gsettings", "get", "org.gnome.shell", "enable-social-bar"],
+                        "output_regex": "false"
+                    }
+                },
+                "success": "There we go! No facebook icon!",
+                "fail": "Hmm, I thought you'd change the value of org.gnome.shell enable-social-bar to false, but it is still true"
+            },
+            {
+                "task": "Now lets change it back to true",
+                "expected": {
+                    "type": "command",
+                    "value": {
+                        "command": ["gsettings", "get", "org.gnome.shell", "enable-social-bar"],
+                        "output_regex": "true"
+                    }
+                },
+                "success": "Okay, phew, facebook is back",
+                "fail": "Quick! I need facebook to come back! Change enable-social-bar on org.gnome.shell back to 'true'!"
+            },
+            {
+                "task": "Oh I know, we should add the Terminal to your pinned apps! To do that, we can add it to the list inside of the taskbar-pins setting. But first lets see what the taskbar-pins setting looks like.",
+                "expected": {
+                    "type": "regex",
+                    "value": ".+"
+                },
+                "success": "Okay, so it is a list in square brackets, where every element is surrounded by quotation marks and separated by a comma. Just like this: ['chromium-browser.desktop', 'my-other-app.desktop']",
+                "fail": "You didn't show me your pinned apps!"
+            },
+            {
+                "task": "Okay, lets pin the Terminal. The Terminal's App ID is 'org.gnome.Terminal', so we should add the 'org.gnome.Terminal.desktop' entry to that list in taskbar-pins",
+                "expected": {
+                    "type": "command",
+                    "value": {
+                        "command": ["gsettings", "get", "org.gnome.shell", "taskbar-pins"],
+                        "output_regex": ".*org.gnome.Terminal.*"
+                    }
+                },
+                "success": "Sweet, looks like I'll be sticking around!",
+                "fail": "I'm not there :( The Terminal's App ID is 'org.gnome.Terminal', so we should add the 'org.gnome.Terminal.desktop' entry to that list in taskbar-pins"
+            }
+        ],
+        "done": "There's a new exercise waiting for you ...."
+    },
+    {
+        "name": "escapevelocity",
+        "desc": "Beyond your wildest dreams....",
+        "practice": [
+            {
+                "task": "Lets list the settings on org.gnome.shell in alphabetical order again",
+                "expected": {
+                    "type": "regex",
+                    "value": "^always.show.log.out$"
+                },
+                "success": "There's something there ....",
+                "fail": "I need those settings! Something weird is going on...."
+            },
+            {
+                "task": "There's something going on here. I have no idea what those 'wobbly' settings are. I didn't put them there!!! Can you filter them down for me so I can have a look? Pipe the output of that command to `grep` using the argument `wobbly` after `grep` to just see the ones starting with `wobbly`.",
+                "expected": {
+                    "type": "regex",
+                    "value": "wobbly.*"
+                },
+                "success": "I still don't know what those are and I don't want to touch them either....",
+                "fail": "I need to have a closer look. This is important"
+            },
+            {
+                "task": "I don't want to touch them, but I don't like them sitting there. .... Maybe, can you turn the 'wobbly-effect' setting on and see what happens?",
+                "expected": {
+                    "type": "command",
+                    "value": {
+                        "command": ["gsettings", "get", "org.gnome.shell", "wobbly-effect"],
+                        "output_regex": "true"
+                    }
+                },
+                "success": "Hmmm.... that's on, but what on earth did that do? Can you try opening a window and just moving things around for a bit? Come back and hit 'enter' when you're done",
+                "fail": "Turn it on. We have to check this out",
+                "only_continue_on": "enter"
+            }
+        ],
+        "done": "!!!!!!!!!!!!! . !!!!!!!!!!!!!!!!!! . What. on. EARTH. is. THAT!?!?!"
     }
 ]
