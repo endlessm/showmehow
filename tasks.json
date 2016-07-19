@@ -75,7 +75,7 @@
                 "fail": "Did you get a cow to say what's in /etc/os-release? Try again"
             }
         ],
-        "done": "You can read any file that is plain text using `cat`. Try it with files like /etc/resolve.conf"
+        "done": "You can read any file that is plain text using `cat`. Try it with files like /etc/resolv.conf"
     },
     {
         "name": "breakit",
