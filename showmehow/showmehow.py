@@ -82,6 +82,10 @@ _PAUSECHARS = ".?!:"
 
 def print_lines_slowly(text, newline=True):
     """Print each character in the line to the standard output."""
+    if os.environ.get("NONINTERACTIVE", None):
+        print(text)
+        return
+
     text = text + " "
     for ind in range(0, len(text)):
         sys.stdout.write(text[ind])
@@ -91,6 +95,21 @@ def print_lines_slowly(text, newline=True):
 
     if newline:
         sys.stdout.write("\n")
+
+_UNLOCKED_FILE = "unlocked.json"
+
+
+def unlock_exercise(exercise):
+    """Cause an exercise to become unlocked"""
+    if os.environ.get("NONINTERACTIVE", None):
+        return
+
+    with open(_UNLOCKED_FILE) as unlocked_file:
+        unlocked_json = json.load(unlocked_file)
+
+    with open(_UNLOCKED_FILE, "w") as unlocked_file:
+        unlocked_file.write(json.dumps(list(set(unlocked_json) |
+                                            set(exercise))))
 
 
 def practice_task(task):
@@ -137,6 +156,9 @@ def practice_task(task):
 
     print("---")
     print_lines_slowly("\n".join(textwrap.wrap(task["done"])))
+    unlocks = task.get("unlocks", None)
+    if unlocks:
+        unlock_exercise(unlocks)
 
 
 def show_tasks(tasks):
@@ -161,7 +183,10 @@ def main(argv=None):
 
     arguments = parser.parse_args(argv or sys.argv[1:])
     with open(arguments.tasks_to_do, "r") as tasks_json_fileobj:
-        tasks = json.loads(tasks_json_fileobj.read())
+        with open(_UNLOCKED_FILE) as unlocked_file:
+            unlocked_tasks = json.load(unlocked_file)
+        tasks = [task for task in json.load(tasks_json_fileobj)
+                 if task["name"] in unlocked_tasks]
 
     try:
         task = [t for t in tasks if t["name"] == arguments.task][0]

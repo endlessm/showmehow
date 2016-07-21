@@ -25,6 +25,7 @@
                 }
             }
         ],
+        "unlocks": ["joke", "readfile"],
         "done": "Awesome! Now that we're done with that, maybe you can run 'showmehow' again to find out what other things you can do in this mysterious place...."
     },
     {
@@ -75,11 +76,13 @@
                 "fail": "Did you get a cow to say what's in /etc/os-release? Try again"
             }
         ],
+        "unlocks": ["breakit"],
         "done": "You can read any file that is plain text using `cat`. Try it with files like /etc/resolv.conf"
     },
     {
         "name": "breakit",
         "desc": "See how it is almost impossible to break anything",
+        "unlocks": ["changesetting"],
         "practice": [
             {
                 "task": "Its pretty difficult to break things on the command line. Try typing gibberish.",
@@ -96,6 +99,7 @@
     {
         "name": "changesetting",
         "desc": "Escape the terminal and tweak the OS",
+        "unlocks": ["escapevelocity"],
         "practice": [
             {
                 "task": "Settings for your computer can be controlled with the `gsettings` tool. Lets find out what you can do with `gsettings`.",
