@@ -7,75 +7,18 @@
 """Entry point for showmehow."""
 
 import argparse
-import json
 import os
-import random
-import re
-import subprocess
 import sys
 import textwrap
 import time
 
+import gi
 
-def interactive_process(shell, env=None):
-    """Interact with a process."""
-    environment = os.environ.copy()
-    if env:
-        environment.update(env)
-    return subprocess.Popen([shell],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            stdin=subprocess.PIPE,
-                            env=environment)
+gi.require_version("Showmehow", "1.0")
+gi.require_version("Gio", "2.0")
 
+from gi.repository import (Gio, Showmehow)
 
-def run_in_shell(shell, cmd, env=None):
-    """Run a process in a shell, then return."""
-    return interactive_process(shell,
-                               env=env).communicate("{}; exit 0".format(cmd)
-                                                                .encode())
-
-
-_WAIT_MESSAGES = [
-    "Wait for it",
-    "Combubulating transistors",
-    "Adjusting for combinatorial flux",
-    "Hacking the matrix",
-    "Exchanging electrical bits",
-    "Refuelling source code",
-    "Fetching arbitrary refs",
-    "Resolving mathematical contradictions",
-    "Fluxing liquid input"
-]
-
-
-def matches_expected_state(expected, all_output):
-    """True if the expected result happened.
-
-    This can be specified in the JSON file as an object with a
-    type and some arbitrary value. The type will determine which
-    matching function is called.
-    """
-    def regex_matcher(value):
-        """Match against a regex."""
-        return re.match(value, all_output.strip(), flags=re.MULTILINE)
-
-    def command_matcher(value):
-        """Run a command and check if it matches what we expect"""
-        output = subprocess.check_output(value["command"])
-        return re.match(value["output_regex"], output.decode().strip())
-
-
-    matchers = {
-        "regex": regex_matcher,
-        "command": command_matcher
-    }
-
-    try:
-        return matchers[expected["type"]](expected["value"])
-    except KeyError:
-        raise RuntimeError("[Internal Error] No handler for "
-                           "matcher {}".format(expected["type"]))
 
 _PAUSECHARS = ".?!:"
 
@@ -96,75 +39,77 @@ def print_lines_slowly(text, newline=True):
     if newline:
         sys.stdout.write("\n")
 
-_UNLOCKED_FILE = "unlocked.json"
+
+def print_message_slowly_and_wait(message, wait_time=2):
+    """Print message slowly and wait a few seconds, printing dots."""
+    print_lines_slowly(message, newline=False)
+    for i in range(0, wait_time):
+        sys.stdout.write(".")
+        sys.stdout.flush()
+        time.sleep(1)
+
+    print("")
+
+def practice_lesson_in_task(service, task_name, lesson_index):
+    """Practice a particular lesson for this task."""
+    if service:
+        (task_desc,
+         success_text,
+         fail_text) = service.call_get_task_description_sync(task_name, lesson_index)
+    else:
+        assert os.environ.get("NONINTERACTIVE", False)
+        # XXX: Copying these in is not ideal, but we are not able to
+        # connect to the service again from within this process if
+        # we are non-interactive.
+        task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
+        success_text = "That's right! Though now you need to tell showmehow what task you want to try. This is called an 'argument'. Try giving showmehow an argument so that it knows what to do. Want to know what argument to give it? There's only one, and it just told you what it was."
+        fail_text = "Nope, that wasn't what I thought would happen! Try typing just 'showmehow' and hit 'enter'. No more, no less (though surrounding spaces are okay)."
+
+    # If we're non-interactive, assume that the lesson passed. Note that
+    # in this case, service will be None, so we need to ensure that
+    # we don't call any methods on it.
+    result = os.environ.get("NONINTERACTIVE", False)
+    n_failed = 0
+
+    print_lines_slowly("\n".join(textwrap.wrap(task_desc)))
+
+    while not result:
+        if n_failed > 0:
+            time.sleep(0.5)
+            print_lines_slowly(fail_text)
+
+        code = input("$ ")
+        (wait_message,
+         printable_output,
+         result) = service.call_attempt_lesson_remote_sync(task_name,
+                                                           lesson_index,
+                                                           code)
+        print_message_slowly_and_wait(wait_message)
+        print(textwrap.indent(printable_output, "> "))
+
+        # This will always be incremented, but it doesn't matter
+        # since it isn't checked anyway if result is True.
+        n_failed += 1
+
+    print_lines_slowly("\n".join(textwrap.wrap(success_text)))
+    print("")
 
 
-def unlock_exercise(exercise):
-    """Cause an exercise to become unlocked"""
-    if os.environ.get("NONINTERACTIVE", None):
-        return
-
-    with open(_UNLOCKED_FILE) as unlocked_file:
-        unlocked_json = json.load(unlocked_file)
-
-    with open(_UNLOCKED_FILE, "w") as unlocked_file:
-        unlocked_file.write(json.dumps(list(set(unlocked_json) |
-                                            set(exercise))))
-
-
-def practice_task(task):
+def practice_task(service, task, _, num_lessons, done_text):
     """Practice the task named :task:"""
     wait_time = 2
 
-    for lesson_spec in task["practice"]:
-        print_lines_slowly("\n".join(textwrap.wrap(lesson_spec["task"])))
-        all_output = ""
-        n_failed = 0
-
-        while not matches_expected_state(lesson_spec["expected"], all_output):
-            if n_failed > 0:
-                time.sleep(0.5)
-                print(lesson_spec["fail"])
-            if os.environ.get("NONINTERACTIVE", None):
-                output = "$ ".encode("utf-8")
-                error = "".encode("utf-8")
-                break
-            else:
-                (output,
-                 error) = run_in_shell("bash",
-                                       input("$ "),
-                                       env=lesson_spec.get("environment",
-                                                           None))
-                print_lines_slowly(random.choice(_WAIT_MESSAGES), newline=False)
-                for i in range(0, wait_time):
-                    sys.stdout.write(".")
-                    sys.stdout.flush()
-                    time.sleep(1)
-
-                wait_time -= 1
-
-            all_output = "\n".join([output.decode(), error.decode()])
-            sys.stdout.write("\n")
-            print(textwrap.indent(all_output, "> "))
-            n_failed += 1
-
-        time.sleep(0.5)
-        print_lines_slowly("\n".join(textwrap.wrap(lesson_spec["success"])))
-        print("")
-        if lesson_spec.get("only_continue_on", None) == "enter":
-            input("")
+    for lesson_index in range(0, num_lessons):
+        practice_lesson_in_task(service, task, lesson_index)
 
     print("---")
-    print_lines_slowly("\n".join(textwrap.wrap(task["done"])))
-    unlocks = task.get("unlocks", None)
-    if unlocks:
-        unlock_exercise(unlocks)
+    print_lines_slowly("\n".join(textwrap.wrap(done_text)))
 
 
 def show_tasks(tasks):
     """Show tasks that can be done in the terminal."""
     for task in tasks:
-        print("[{task[name]}] - {task[desc]}".format(task=task))
+        print("[{task[0]}] - {task[1]}".format(task=task))
 
 
 def main(argv=None):
@@ -175,27 +120,28 @@ def main(argv=None):
                         metavar='TASK',
                         help='TASK to perform',
                         type=str)
-    parser.add_argument('--tasks-to-do',
-                        metavar='JSON',
-                        help='JSON file containing tasks',
-                        default='tasks.json',
-                        type=str)
 
     arguments = parser.parse_args(argv or sys.argv[1:])
-    with open(arguments.tasks_to_do, "r") as tasks_json_fileobj:
-        with open(_UNLOCKED_FILE) as unlocked_file:
-            unlocked_tasks = json.load(unlocked_file)
-        tasks = [task for task in json.load(tasks_json_fileobj)
-                 if task["name"] in unlocked_tasks]
+
+    if os.environ.get("NONINTERACTIVE"):
+        service = None
+        unlocked_tasks = [("showmehow", "Show me how to do things...", 2, "Done")]
+    else:
+        service = Showmehow.ServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
+                                                          0,
+                                                          "com.endlessm.Showmehow.Service",
+                                                          "/com/endlessm/Showmehow/Service")
+        unlocked_tasks = service.call_get_unlocked_lessons_sync()
+
 
     try:
-        task = [t for t in tasks if t["name"] == arguments.task][0]
+        task = [t for t in unlocked_tasks if t[0] == arguments.task][0]
     except IndexError:
         if arguments.task:
             print_lines_slowly("I don't know how to do task {}".format(arguments.task))
         else:
             print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
-        return show_tasks(tasks)
+        return show_tasks(unlocked_tasks)
 
-    return practice_task(task)
+    return practice_task(service, *task)
 
