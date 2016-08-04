@@ -1,0 +1,37 @@
+Source: showmehow
+Maintainer: Sam Spilsbury <sam@endlessm.com>
+Section: python
+Priority: optional
+Build-Depends: python-setuptools (>= 0.6b3),
+               python3-setuptools,
+               python-all (>= 2.6.6-3),
+               python3-all,
+               debhelper (>= 7.4.3)
+Standards-Version: 3.9.1
+
+
+
+Package: python-showmehow
+Architecture: all
+Depends: python-gi,
+         libshowmehow-service-0,
+         gir1.2-showmehow-service-0,
+         ${misc:Depends},
+         ${python:Depends}
+Conflicts: python3-showmehow
+Description: Show a user how to do something in the terminal.
+ Show a user how to do something in the terminal.
+
+
+
+Package: python3-showmehow
+Architecture: all
+Depends: python3-gi,
+         libshowmehow-service-0,
+         gir1.2-showmehow-service-0,
+         ${misc:Depends},
+         ${python3:Depends}
+Conflicts: python-showmehow
+Description: Show a user how to do something in the terminal.
+ Show a user how to do something in the terminal.
+
