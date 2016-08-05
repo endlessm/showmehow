@@ -34,7 +34,7 @@ setup(name="showmehow",
       entry_points={
           "console_scripts": [
               "showmehow=showmehow.showmehow:main",
-              "remindmehow=remindmehow.remindmehow:main"
+              "remindmehow=showmehow.remindmehow:main"
           ]
       },
       zip_safe=True,

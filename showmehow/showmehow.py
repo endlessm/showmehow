@@ -112,6 +112,14 @@ def show_tasks(tasks):
         print("[{task[0]}] - {task[1]}".format(task=task))
 
 
+def create_service():
+    """Create a ShowmehowService."""
+    return Showmehow.ServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
+                                                   0,
+                                                   "com.endlessm.Showmehow.Service",
+                                                   "/com/endlessm/Showmehow/Service")
+
+
 def main(argv=None):
     """Entry point. Parse arguments and start the application."""
     parser = argparse.ArgumentParser('showmehow - Show me how to do things')
@@ -127,10 +135,7 @@ def main(argv=None):
         service = None
         unlocked_tasks = [("showmehow", "Show me how to do things...", 2, "Done")]
     else:
-        service = Showmehow.ServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
-                                                          0,
-                                                          "com.endlessm.Showmehow.Service",
-                                                          "/com/endlessm/Showmehow/Service")
+        service = create_service()
         unlocked_tasks = service.call_get_unlocked_lessons_sync()
 
 
