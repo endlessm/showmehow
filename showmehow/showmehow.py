@@ -19,6 +19,11 @@ gi.require_version("Gio", "2.0")
 
 from gi.repository import (Gio, Showmehow)
 
+try:
+    input = raw_input
+except NameError:
+    pass
+
 
 _PAUSECHARS = ".?!:"
 
