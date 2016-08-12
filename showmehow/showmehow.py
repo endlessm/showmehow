@@ -143,7 +143,7 @@ def main(argv=None):
         unlocked_tasks = [("showmehow", "Show me how to do things...", 2, "Done")]
     else:
         service = create_service()
-        unlocked_tasks = service.call_get_unlocked_lessons_sync()
+        unlocked_tasks = service.call_get_unlocked_lessons_sync("console")
 
 
     try:

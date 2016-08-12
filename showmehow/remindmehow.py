@@ -37,7 +37,7 @@ def main(argv=None):
     arguments = parser.parse_args(argv or sys.argv[1:])
 
     service = create_service()
-    known_tasks = service.call_get_known_spells_sync()
+    known_tasks = service.call_get_known_spells_sync("console")
 
     if not len(known_tasks):
         print_lines_slowly("You haven't completed any tasks yet. "
