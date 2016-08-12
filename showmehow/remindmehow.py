@@ -19,10 +19,10 @@ gi.require_version("Gio", "2.0")
 
 from gi.repository import (Gio, Showmehow)
 
-from showmehow.showmehow import (create_service,
-                                 practice_task,
-                                 print_lines_slowly,
-                                 show_tasks)
+from showmehow import (create_service,
+                       practice_task,
+                       print_lines_slowly,
+                       show_tasks)
 
 
 def main(argv=None):
