@@ -90,7 +90,9 @@ def practice_lesson_in_task(service, task_name, lesson_index):
                                                            lesson_index,
                                                            code)
         print_message_slowly_and_wait(wait_message)
-        print(textwrap.indent(printable_output, "> "))
+        print("\n".join(textwrap.wrap(printable_output,
+                                      initial_indent="> ",
+                                      subsequent_indent="> ")))
 
         # This will always be incremented, but it doesn't matter
         # since it isn't checked anyway if result is True.
