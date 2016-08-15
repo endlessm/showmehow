@@ -123,10 +123,18 @@ def print_message_slowly_and_wait(message, wait_time=2):
 
 def show_wrapped_response(value):
     """Print wrapped text, quickly."""
-    print("\n".join(textwrap.wrap(value,
-                                  initial_indent="> ",
-                                  subsequent_indent="> ")))
-
+    # HACK: textwrap.wrap seems to do a bad job of actually
+    # wrapping and splitting on newlines. Avoid it if possible
+    # when we already have lines that are less than 70 chars
+    if (all([len(l) < 70 for l in value.splitlines()])):
+        print("\n".join([
+            "> " + l for l in value.splitlines()
+        ]))
+    else:
+        print("\n".join(textwrap.wrap(value,
+                                      replace_whitespace=False,
+                                      initial_indent="> ",
+                                      subsequent_indent="> ")))
 class WaitTextFunctor(object):
     """Stateful function to print text slowly and wait."""
     def __init__(self):
