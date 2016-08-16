@@ -1,3 +1,9 @@
+showmehow (0.0.2) eos; urgency=medium
+
+  * New upstream release
+
+ -- Sam Spilsbury <sam@endlessm.com>  Wed, 17 Aug 2016 02:24:58 +0800
+
 showmehow (0.0.1) unstable; urgency=low
 
   * source package automatically created by stdeb 0.8.5
