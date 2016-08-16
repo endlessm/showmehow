@@ -22,7 +22,8 @@ from gi.repository import (Gio, Showmehow)
 from showmehow import (create_service,
                        practice_task,
                        print_lines_slowly,
-                       show_tasks)
+                       show_tasks,
+                       ReloadMonitor)
 
 
 def main(argv=None):
@@ -53,4 +54,6 @@ def main(argv=None):
             print_lines_slowly("You've done the following tasks:")
         return show_tasks(known_tasks)
 
-    return practice_task(service, *task)
+    with ReloadMonitor(service) as monitor:
+        return practice_task(service, monitor, *task)
+

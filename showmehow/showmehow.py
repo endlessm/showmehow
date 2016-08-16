@@ -10,14 +10,16 @@ import argparse
 import os
 import sys
 import textwrap
+import threading
 import time
 
 import gi
 
 gi.require_version("Showmehow", "1.0")
+gi.require_version("GLib", "2.0")
 gi.require_version("Gio", "2.0")
 
-from gi.repository import (Gio, Showmehow)
+from gi.repository import (GLib, Gio, Showmehow)
 
 try:
     input = raw_input
@@ -26,6 +28,66 @@ except NameError:
 
 
 _PAUSECHARS = ".?!:"
+
+
+class ReloadMonitor(object):
+    """Monitor a ShowmehowService to see if the content was reloaded."""
+
+    def __init__(self, service):
+        """Initialise with service and spawn a thread
+
+        This thread will monitor whether the content behind the service
+        has been reloaded. If so, it sets the reloaded property
+        to true. This can be read by other consumers in the main
+        thread to determine what to do.
+        """
+        super(ReloadMonitor, self).__init__()
+
+        self.reloaded = False
+        self._service = service
+
+        self._thread = None
+        self._loop = None
+
+    def start(self):
+        """Start the monitoring thread."""
+        if not self._thread:
+            self._thread = threading.Thread(target=self.monitor_thread)
+            self._thread.start()
+
+    def __enter__(self):
+        """Use as a context manager. Start the monitor."""
+        self.start()
+        return self
+
+    def __exit__(self, exc_type, value, traceback):
+        """Close down the monitor."""
+        self.quit()
+
+    def quit(self):
+        """Stop monitoring for reloads and shut down."""
+        if not self._thread or not self._loop:
+            return
+
+        self._loop.quit()
+        self._thread.join()
+
+        self._thread = None
+        self._loop = None
+
+    def monitor_thread(self):
+        """Run the GLib main loop and monitor for changes."""
+        # We might not have an active service. In that case,
+        # just return immediately as there is nothing to
+        # monitor.
+        if self._service:
+            self._service.connect("lessons-changed", self.on_lessons_changed)
+            self._loop = GLib.MainLoop()
+            self._loop.run()
+
+    def on_lessons_changed(self, proxy):
+        """Set the reloaded property to true on this instance."""
+        self.reloaded = True
 
 
 def print_lines_slowly(text, newline=True):
@@ -55,7 +117,7 @@ def print_message_slowly_and_wait(message, wait_time=2):
 
     print("")
 
-def practice_lesson_in_task(service, task_name, lesson_index):
+def practice_lesson_in_task(service, monitor, task_name, lesson_index):
     """Practice a particular lesson for this task."""
     if service:
         (task_desc,
@@ -84,6 +146,16 @@ def practice_lesson_in_task(service, task_name, lesson_index):
             print_lines_slowly(fail_text)
 
         code = input("$ ")
+
+        # Now, check just before submission if the lessons changed
+        # from underneath us. We're a blocking application, so this
+        # is the best place to put this check. If the lessons did
+        # change, get out and notify the user instead of crashing.
+        if monitor.reloaded:
+            print("Service indicated that lessons were reloaded, "
+                  "bailing out now.")
+            return False
+
         (wait_message,
          printable_output,
          result) = service.call_attempt_lesson_remote_sync(task_name,
@@ -101,13 +173,16 @@ def practice_lesson_in_task(service, task_name, lesson_index):
     print_lines_slowly("\n".join(textwrap.wrap(success_text)))
     print("")
 
+    return True
 
-def practice_task(service, task, _, num_lessons, done_text):
+
+def practice_task(service, monitor, task, _, num_lessons, done_text):
     """Practice the task named :task:"""
     wait_time = 2
 
     for lesson_index in range(0, num_lessons):
-        practice_lesson_in_task(service, task, lesson_index)
+        if not practice_lesson_in_task(service, monitor, task, lesson_index):
+            break
 
     print("---")
     print_lines_slowly("\n".join(textwrap.wrap(done_text)))
@@ -159,5 +234,6 @@ def main(argv=None):
             print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
-    return practice_task(service, *task)
+    with ReloadMonitor(service) as monitor:
+        return practice_task(service, monitor, *task)
 
