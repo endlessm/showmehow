@@ -121,10 +121,15 @@ def show_tasks(tasks):
 
 def create_service():
     """Create a ShowmehowService."""
-    return Showmehow.ServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
-                                                   0,
-                                                   "com.endlessm.Showmehow.Service",
-                                                   "/com/endlessm/Showmehow/Service")
+    service = Showmehow.ServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
+                                                      0,
+                                                      "com.endlessm.Showmehow.Service",
+                                                      "/com/endlessm/Showmehow/Service")
+    # Display any warnings that came through from the service.
+    for warning in service.call_get_warnings_sync():
+        print("Service warning: " + warning[0])
+
+    return service
 
 
 def main(argv=None):
@@ -144,7 +149,6 @@ def main(argv=None):
     else:
         service = create_service()
         unlocked_tasks = service.call_get_unlocked_lessons_sync("console")
-
 
     try:
         task = [t for t in unlocked_tasks if t[0] == arguments.task][0]
