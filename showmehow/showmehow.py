@@ -7,11 +7,14 @@
 """Entry point for showmehow."""
 
 import argparse
+import json
 import os
 import sys
 import textwrap
 import threading
 import time
+
+from collections import OrderedDict
 
 import gi
 
@@ -117,35 +120,127 @@ def print_message_slowly_and_wait(message, wait_time=2):
 
     print("")
 
-def practice_lesson_in_task(service, monitor, task_name, lesson_index):
+
+def show_wrapped_response(value):
+    """Print wrapped text, quickly."""
+    print("\n".join(textwrap.wrap(value,
+                                  initial_indent="> ",
+                                  subsequent_indent="> ")))
+
+class WaitTextFunctor(object):
+    """Stateful function to print text slowly and wait."""
+    def __init__(self):
+        """Initialise."""
+        super(WaitTextFunctor, self).__init__()
+        self._wait_time = 3
+
+    def __call__(self, text):
+        """Print text slowly and wait.
+
+        The wait time will decrease every time this method is called.
+        """
+        self._wait_time = max(self._wait_time - 1, 1)
+
+
+def show_response_scrolled(value):
+    """Print scrolled text."""
+    print_lines_slowly("\n".join(textwrap.wrap(value)))
+
+
+_RESPONSE_ACTIONS = {
+    "scrolled": show_response_scrolled,
+    "scroll_wait": WaitTextFunctor(),
+    "wrapped": show_wrapped_response
+}
+
+
+def show_response(response):
+    """Take a response and show it as appropriate."""
+    try:
+        _RESPONSE_ACTIONS[response["type"]](response["value"])
+    except KeyError:
+        raise RuntimeError("Don't know how to handle response type " +
+                           response["type"])
+
+
+def handle_input_choice(choices):
+    """Given some choices, allow the user to select a choice."""
+    choices = OrderedDict(choices)
+    selected_index = len(choices)
+
+    while not selected_index < len(choices):
+        for index, desc in enumerate(choices.values()):
+            print("({}) {}".format(index + 1, desc["text"]))
+
+        # Show the choices and allow the user to pick on as an index
+        try:
+            selected_index = int(input("Choice: ")) - 1
+        except ValueError:
+            selected_index = len(choices)
+
+    return list(choices.keys())[selected_index]
+
+
+def handle_input_text(prompt):
+    """Handle free text input, closure."""
+    def inner(*args):
+        """Get prompt"""
+        del args
+
+        return input(prompt)
+
+    return inner
+
+
+def handle_input_external_events(*args):
+    """Handle external events input."""
+    del args
+
+    return "satisfied"
+
+_INPUT_ACTIONS = {
+    "choice": handle_input_choice,
+    "text": handle_input_text(""),
+    "console": handle_input_text("$ "),
+    "external_events": handle_input_external_events
+}
+
+
+def handle_input(input_desc):
+    """Given some input type, handle the input."""
+    try:
+        return _INPUT_ACTIONS[input_desc["type"]](input_desc["settings"])
+    except KeyError:
+        raise RuntimeError("Don't know how to handle input type " +
+                           input_desc["type"])
+
+
+def practice_lesson_in_task(service, monitor, task_name, lesson_id):
     """Practice a particular lesson for this task."""
     if service:
         (task_desc,
-         success_text,
-         fail_text) = service.call_get_task_description_sync(task_name, lesson_index)
+         input_desc) = service.call_get_task_description_sync(task_name,
+                                                              lesson_id)
     else:
         assert os.environ.get("NONINTERACTIVE", False)
         # XXX: Copying these in is not ideal, but we are not able to
         # connect to the service again from within this process if
         # we are non-interactive.
+        #
+        # If we're non-interactive, assume that the lesson passed. Note that
+        # in this case, service will be None, so we need to ensure that
+        # we don't call any methods on it.
         task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
         success_text = "That's right! Though now you need to tell showmehow what task you want to try. This is called an 'argument'. Try giving showmehow an argument so that it knows what to do. Want to know what argument to give it? There's only one, and it just told you what it was."
-        fail_text = "Nope, that wasn't what I thought would happen! Try typing just 'showmehow' and hit 'enter'. No more, no less (though surrounding spaces are okay)."
-
-    # If we're non-interactive, assume that the lesson passed. Note that
-    # in this case, service will be None, so we need to ensure that
-    # we don't call any methods on it.
-    result = os.environ.get("NONINTERACTIVE", False)
-    n_failed = 0
+        print(success_text)
 
     print_lines_slowly("\n".join(textwrap.wrap(task_desc)))
 
-    while not result:
-        if n_failed > 0:
-            time.sleep(0.5)
-            print_lines_slowly(fail_text)
-
-        code = input("$ ")
+    # The returned lesson_id stays constant if we are supposed
+    # to stay on this task because of a failed input.
+    next_lesson_id = lesson_id
+    while next_lesson_id == lesson_id:
+        input_result = handle_input(json.loads(input_desc))
 
         # Now, check just before submission if the lessons changed
         # from underneath us. We're a blocking application, so this
@@ -154,38 +249,30 @@ def practice_lesson_in_task(service, monitor, task_name, lesson_index):
         if monitor.reloaded:
             print("Service indicated that lessons were reloaded, "
                   "bailing out now.")
-            return False
+            return None
 
-        (wait_message,
-         printable_output,
-         result) = service.call_attempt_lesson_remote_sync(task_name,
-                                                           lesson_index,
-                                                           code)
-        print_message_slowly_and_wait(wait_message)
-        print("\n".join(textwrap.wrap(printable_output,
-                                      initial_indent="> ",
-                                      subsequent_indent="> ")))
+        (responses,
+         next_lesson_id) = service.call_attempt_lesson_remote_sync(task_name,
+                                                                   lesson_id,
+                                                                   input_result)
 
-        # This will always be incremented, but it doesn't matter
-        # since it isn't checked anyway if result is True.
-        n_failed += 1
+        for response in json.loads(responses):
+            show_response(response)
 
-    print_lines_slowly("\n".join(textwrap.wrap(success_text)))
-    print("")
-
-    return True
+    return next_lesson_id
 
 
-def practice_task(service, monitor, task, _, num_lessons, done_text):
+def practice_task(service, monitor, task, _, entry):
     """Practice the task named :task:"""
-    wait_time = 2
+    lesson_id = entry
 
-    for lesson_index in range(0, num_lessons):
-        if not practice_lesson_in_task(service, monitor, task, lesson_index):
-            break
-
-    print("---")
-    print_lines_slowly("\n".join(textwrap.wrap(done_text)))
+    # practice_lesson_in_task will return None when there are no more
+    # tasks to complete in this lesson, for whatever reason.
+    while lesson_id is not "":
+        lesson_id = practice_lesson_in_task(service,
+                                            monitor,
+                                            task,
+                                            lesson_id)
 
 
 def show_tasks(tasks):
@@ -220,7 +307,7 @@ def main(argv=None):
 
     if os.environ.get("NONINTERACTIVE"):
         service = None
-        unlocked_tasks = [("showmehow", "Show me how to do things...", 2, "Done")]
+        unlocked_tasks = [("showmehow", "Show me how to do things...", "showmehow")]
     else:
         service = create_service()
         unlocked_tasks = service.call_get_unlocked_lessons_sync("console")
@@ -236,4 +323,3 @@ def main(argv=None):
 
     with ReloadMonitor(service) as monitor:
         return practice_task(service, monitor, *task)
-
