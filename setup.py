@@ -9,7 +9,7 @@
 from setuptools import find_packages, setup
 
 setup(name="showmehow",
-      version="0.0.1",
+      version="0.0.0",
       description="""Show a user how to do something in the terminal.""",
       long_description="""Show a user how to do something in the terminal.""",
       author="Sam Spilsbury",
