@@ -30,7 +30,6 @@ setup(name="showmehow",
       keywords="development",
       packages=find_packages(exclude=["test"]),
       install_requires=["setuptools"],
-      test_suite="nose.collector",
       entry_points={
           "console_scripts": [
               "showmehow=showmehow.showmehow:main",
