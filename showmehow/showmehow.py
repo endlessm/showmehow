@@ -9,12 +9,18 @@
 import argparse
 import json
 import os
+import select
 import sys
 import textwrap
 import threading
 import time
 
-from collections import OrderedDict
+try:
+    from Queue import Queue
+except ImportError:
+    from queue import Queue
+
+from collections import defaultdict, OrderedDict
 
 import gi
 
@@ -31,67 +37,6 @@ except NameError:
 
 
 _PAUSECHARS = ".?!:"
-
-
-class ReloadMonitor(object):
-    """Monitor a ShowmehowService to see if the content was reloaded."""
-
-    def __init__(self, service):
-        """Initialise with service and spawn a thread
-
-        This thread will monitor whether the content behind the service
-        has been reloaded. If so, it sets the reloaded property
-        to true. This can be read by other consumers in the main
-        thread to determine what to do.
-        """
-        super(ReloadMonitor, self).__init__()
-
-        self.reloaded = False
-        self._service = service
-
-        self._thread = None
-        self._loop = None
-
-    def start(self):
-        """Start the monitoring thread."""
-        if not self._thread:
-            self._thread = threading.Thread(target=self.monitor_thread)
-            self._thread.start()
-
-    def __enter__(self):
-        """Use as a context manager. Start the monitor."""
-        self.start()
-        return self
-
-    def __exit__(self, exc_type, value, traceback):
-        """Close down the monitor."""
-        self.quit()
-
-    def quit(self):
-        """Stop monitoring for reloads and shut down."""
-        if not self._thread or not self._loop:
-            return
-
-        self._loop.quit()
-        self._thread.join()
-
-        self._thread = None
-        self._loop = None
-
-    def monitor_thread(self):
-        """Run the GLib main loop and monitor for changes."""
-        # We might not have an active service. In that case,
-        # just return immediately as there is nothing to
-        # monitor.
-        if self._service:
-            self._service.connect("lessons-changed", self.on_lessons_changed)
-            self._loop = GLib.MainLoop()
-            self._loop.run()
-
-    def on_lessons_changed(self, proxy):
-        """Set the reloaded property to true on this instance."""
-        self.reloaded = True
-
 
 def print_lines_slowly(text, newline=True):
     """Print each character in the line to the standard output."""
@@ -135,6 +80,8 @@ def show_wrapped_response(value):
                                       replace_whitespace=False,
                                       initial_indent="> ",
                                       subsequent_indent="> ")))
+
+
 class WaitTextFunctor(object):
     """Stateful function to print text slowly and wait."""
     def __init__(self):
@@ -172,7 +119,7 @@ def show_response(response):
                            response["type"])
 
 
-def handle_input_choice(choices):
+def handle_input_choice(choices, _):
     """Given some choices, allow the user to select a choice."""
     choices = OrderedDict(choices)
     selected_index = len(choices)
@@ -201,11 +148,24 @@ def handle_input_text(prompt):
     return inner
 
 
-def handle_input_external_events(*args):
+def handle_input_external_events(settings, monitor):
     """Handle external events input."""
-    del args
+    event_status = {
+        "occurred": False
+    }
 
-    return "satisfied"
+    def signal_handler(monitor, name):
+        """Return a function to handle a signal."""
+        print("Signal " + name + " happened in main thread")
+        event_status["occurred"] = True
+
+    monitor.monitor_signal("lesson-events-satisfied", signal_handler)
+
+    # Continually pump events until the flag is set
+    while not event_status["occurred"]:
+        monitor.dispatch_queued_signal_events()
+
+    return ""
 
 _INPUT_ACTIONS = {
     "choice": handle_input_choice,
@@ -214,74 +174,245 @@ _INPUT_ACTIONS = {
     "external_events": handle_input_external_events
 }
 
+def display_input_choice(choices):
+    """Display available choices."""
+    choices = OrderedDict(choices)
+    for index, desc in enumerate(choices.values()):
+        print("({}) {}".format(index + 1, desc["text"]))
 
-def handle_input(input_desc):
+    sys.stdout.write("Choice: ")
+    sys.stdout.flush()
+
+
+def display_input_prompt(prompt):
+    """Display prompt."""
+    def _internal(*args):
+        """Internal func."""
+        del args
+
+        if prompt:
+            sys.stdout.write(prompt + " ")
+            sys.stdout.flush()
+
+    return _internal
+
+
+_DISPLAY_INPUT_ACTIONS = {
+    "choice": display_input_choice,
+    "text": display_input_prompt(">"),
+    "console": display_input_prompt("$")
+}
+
+def display_input(input_desc):
+    """Display a prompt to the user depending on the input type."""
+    try:
+        handler = _DISPLAY_INPUT_ACTIONS[input_desc["type"]]
+    except KeyError:
+        return
+
+    return handler(input_desc["settings"])
+
+
+def handle_user_input_choice(text, choices):
+    """Handle a choice by the user.
+
+    If the user makes a wrong choice, show input_desc again.
+    """
+    choices = OrderedDict(choices)
+
+    try:
+        selected_index = int(text) - 1
+    except ValueError:
+        selected_index = len(choices)
+
+    if selected_index < len(choices):
+        return list(choices.keys())[selected_index]
+    else:
+        return None
+
+
+def handle_user_input_text(text, *args):
+    """Handle some raw textual input by the user."""
+    del args
+
+    converted = text.strip().lstrip()
+    if len(converted):
+        return converted
+    else:
+        return None
+
+
+def handle_user_input_external_events(*args):
+    """Handle user input when an external event happens."""
+    del args
+    return ""
+
+
+_USER_INPUT_ACTIONS = {
+    "choice": handle_user_input_choice,
+    "text": handle_user_input_text,
+    "console": handle_user_input_text,
+    "external_events": handle_user_input_external_events
+}
+
+
+def handle_input(text, input_desc):
     """Given some input type, handle the input."""
     try:
-        return _INPUT_ACTIONS[input_desc["type"]](input_desc["settings"])
+        return _INPUT_ACTIONS[input_desc["type"]](text,
+                                                  input_desc["settings"])
     except KeyError:
         raise RuntimeError("Don't know how to handle input type " +
                            input_desc["type"])
 
 
-def practice_lesson_in_task(service, monitor, task_name, lesson_id):
-    """Practice a particular lesson for this task."""
-    if service:
-        (task_desc,
-         input_desc) = service.call_get_task_description_sync(task_name,
-                                                              lesson_id)
-    else:
-        assert os.environ.get("NONINTERACTIVE", False)
-        # XXX: Copying these in is not ideal, but we are not able to
-        # connect to the service again from within this process if
-        # we are non-interactive.
-        #
-        # If we're non-interactive, assume that the lesson passed. Note that
-        # in this case, service will be None, so we need to ensure that
-        # we don't call any methods on it.
-        task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
-        success_text = "That's right! Though now you need to tell showmehow what task you want to try. This is called an 'argument'. Try giving showmehow an argument so that it knows what to do. Want to know what argument to give it? There's only one, and it just told you what it was."
-        print(success_text)
+_INPUT_STATE_TRANSITIONS = defaultdict(lambda: "waiting",
+                                       external_events="waiting_lesson_events")
 
-    print_lines_slowly("\n".join(textwrap.wrap(task_desc)))
 
-    # The returned lesson_id stays constant if we are supposed
-    # to stay on this task because of a failed input.
-    next_lesson_id = lesson_id
-    while next_lesson_id == lesson_id:
-        input_result = handle_input(json.loads(input_desc))
+class PracticeTaskStateMachine(object):
+    """A state machine representing a currently-practiced task.
 
-        # Now, check just before submission if the lessons changed
-        # from underneath us. We're a blocking application, so this
-        # is the best place to put this check. If the lessons did
-        # change, get out and notify the user instead of crashing.
-        if monitor.reloaded:
-            print("Service indicated that lessons were reloaded, "
-                  "bailing out now.")
-            return None
+    This state machine has the following states:
+      (F) -> Fetching task description
+      (W) -> Waiting on input
+      (S) -> Submit input
+      (E) -> Exiting
 
-        (responses,
-         next_lesson_id) = service.call_attempt_lesson_remote_sync(task_name,
-                                                                   lesson_id,
-                                                                   input_result)
+    The transitions are defined as follows:
+      F -> W
+      W -> S, W
+      S -> F, E
+    ."""
+
+    def __init__(self, service, lesson, task):
+        """Initialise this state machine with the service.
+
+        Connect to the relevant signals to handle state transitions.
+        """
+        super(PracticeTaskStateMachine, self).__init__()
+
+        self._service = service
+        self._lesson = lesson
+        self._task = task
+        self._current_input_desc = None
+        self._loop = GLib.MainLoop()
+        self._state = "fetching"
+
+        self._service.connect("lessons-changed", self.handle_lessons_changed)
+        self._service.connect("lesson-events-satisfied", self.lesson_events_satisfied)
+        GLib.io_add_watch(sys.stdin.fileno(),
+                          GLib.PRIORITY_DEFAULT,
+                          GLib.IO_IN,
+                          self.handle_user_input)
+
+        # Display content for the entry point
+        self._service.call_get_task_description(self._lesson,
+                                                self._task,
+                                                None,
+                                                self.handle_task_description_fetched)
+
+    def start(self):
+        """Start the state machine and the underlying main loop."""
+        return self._loop.run()
+
+    def handle_lessons_changed(self, *args):
+        """Handle lessons changing underneath us."""
+        del args
+
+        print("Lessons changed - aborting")
+        self._loop.quit()
+
+    def lesson_events_satisfied(self, _, lesson, task):
+        """Respond to events happening on lesson."""
+        if (self._state == "waiting_lesson_events" and
+            self._lesson == lesson and self._task == task):
+            self._state = "submit"
+            self._service.call_attempt_lesson_remote(self._lesson,
+                                                     self._task,
+                                                     "",
+                                                     None,
+                                                     self.handle_attempt_lesson_remote)
+
+    def handle_task_description_fetched(self, source, result):
+        """Finish getting the task description and move to W."""
+        assert self._state == "fetching"
+
+        try:
+            task_desc, input_desc = self._service.call_get_task_description_finish(result)
+        except Exception as error:
+            print("Getting task description for {} failed: {}".format(self._task,
+                                                                      error))
+
+        print_lines_slowly("\n".join(textwrap.wrap(task_desc)))
+        self._current_input_desc = json.loads(input_desc)
+        self._state = _INPUT_STATE_TRANSITIONS[self._current_input_desc["type"]]
+        display_input(self._current_input_desc)
+
+    def handle_attempt_lesson_remote(self, source, result):
+        """Finish handling the lesson and move to F or E."""
+        assert self._state == "submit"
+
+        try:
+            responses, next_task_id = self._service.call_attempt_lesson_remote_finish(result)
+        except Exception as error:
+            print("Internal error in attempting {}, {}".format(self._task,
+                                                               error))
 
         for response in json.loads(responses):
             show_response(response)
 
-    return next_lesson_id
+        if next_task_id == self._task:
+            display_input(self._current_input_desc)
+            self._state = _INPUT_STATE_TRANSITIONS[self._current_input_desc["type"]]
+        elif next_task_id == "":
+            self._loop.quit()
+        else:
+            self._state = "fetching"
+            self._current_input_desc = None
+            self._task = next_task_id
+            self._service.call_get_task_description(self._lesson,
+                                                    self._task,
+                                                    None,
+                                                    self.handle_task_description_fetched)
 
+    def handle_user_input(self, stdin_fd, events):
+        """Handle user input from stdin.
 
-def practice_task(service, monitor, task, _, entry):
-    """Practice the task named :task:"""
-    lesson_id = entry
+        Input could happen at any time, so if it does and we're not ready
+        just return and wait for it to happen again.
+        """
+        if not (events & GLib.IO_IN):
+            return True
 
-    # practice_lesson_in_task will return None when there are no more
-    # tasks to complete in this lesson, for whatever reason.
-    while lesson_id is not "":
-        lesson_id = practice_lesson_in_task(service,
-                                            monitor,
-                                            task,
-                                            lesson_id)
+        if self._state == "waiting":
+            # Just get one line from the standard in
+            user_input = sys.stdin.readline()
+
+            try:
+                input_handler = _USER_INPUT_ACTIONS[self._current_input_desc["type"]]
+            except KeyError:
+                raise RuntimeError("Don't know how to handle input type " +
+                                   self._current_input_desc["type"])
+
+            converted_input = input_handler(user_input,
+                                            self._current_input_desc["settings"])
+
+            # Two possible state transitions, W -> W
+            # or W -> S. W -> W happens if input_handler
+            # returns None, otherwise we return the result to
+            # the service and switch to S.
+            if not converted_input:
+                display_input_prompt(self._current_input_desc)
+            else:
+                # Submit this to the service and wait for the result
+                self._state = "submit"
+                self._service.call_attempt_lesson_remote(self._lesson,
+                                                         self._task,
+                                                         converted_input,
+                                                         None,
+                                                         self.handle_attempt_lesson_remote)
+        return True
 
 
 def show_tasks(tasks):
@@ -322,7 +453,9 @@ def main(argv=None):
         unlocked_tasks = service.call_get_unlocked_lessons_sync("console")
 
     try:
-        task = [t for t in unlocked_tasks if t[0] == arguments.task][0]
+        task, desc, entry = [
+            t for t in unlocked_tasks if t[0] == arguments.task
+        ][0]
     except IndexError:
         if arguments.task:
             print_lines_slowly("I don't know how to do task {}".format(arguments.task))
@@ -330,5 +463,4 @@ def main(argv=None):
             print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
-    with ReloadMonitor(service) as monitor:
-        return practice_task(service, monitor, *task)
+    return PracticeTaskStateMachine(service, task, entry).start()
