@@ -148,6 +148,7 @@ class WaitTextFunctor(object):
         The wait time will decrease every time this method is called.
         """
         self._wait_time = max(self._wait_time - 1, 1)
+        print_message_slowly_and_wait(text, self._wait_time)
 
 
 def show_response_scrolled(value):
