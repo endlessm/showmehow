@@ -434,6 +434,32 @@ def create_service():
     return service
 
 
+def noninteractive_predefined_script(arguments):
+    """Script to follow if we are non-interactive.
+
+    This does not create a service instance. Instead, it just gives
+    two canned responses depending on the arguments.
+
+    If no arguments are given, show a mock response for what unlocked_tasks
+    would be.
+
+    If an argument is given, show a mock response for what "showmehow showmehow"
+    would do.
+
+    The reason we have this is that we cannot connect to the service
+    within a child process of the service - that just hangs. We only care
+    about specific canned responses, so just use those.
+    """
+    if not arguments.task:
+        print("Hey, how are you? I can tell you about the following tasks:\n")
+        show_tasks([("showmehow", "Show me how to do things...", "showmehow")])
+    else:
+        task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
+        success_text = "That's right! Though now you need to tell showmehow what task you want to try. This is called an 'argument'. Try giving showmehow an argument so that it knows what to do. Want to know what argument to give it? There's only one, and it just told you what it was."
+        print(task_desc)
+        print(success_text)
+
+
 def main(argv=None):
     """Entry point. Parse arguments and start the application."""
     parser = argparse.ArgumentParser('showmehow - Show me how to do things')
@@ -446,8 +472,7 @@ def main(argv=None):
     arguments = parser.parse_args(argv or sys.argv[1:])
 
     if os.environ.get("NONINTERACTIVE"):
-        service = None
-        unlocked_tasks = [("showmehow", "Show me how to do things...", "showmehow")]
+        return noninteractive_predefined_script(arguments)
     else:
         service = create_service()
         unlocked_tasks = service.call_get_unlocked_lessons_sync("console")
