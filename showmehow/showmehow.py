@@ -156,7 +156,6 @@ def handle_input_external_events(settings, monitor):
 
     def signal_handler(monitor, name):
         """Return a function to handle a signal."""
-        print("Signal " + name + " happened in main thread")
         event_status["occurred"] = True
 
     monitor.monitor_signal("lesson-events-satisfied", signal_handler)
