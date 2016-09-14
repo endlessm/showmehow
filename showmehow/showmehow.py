@@ -20,6 +20,11 @@ try:
 except ImportError:
     from queue import Queue
 
+try:
+    import readline
+except ImportError:
+    pass
+
 from collections import defaultdict, OrderedDict
 
 import gi
@@ -386,7 +391,7 @@ class PracticeTaskStateMachine(object):
 
         if self._state == "waiting":
             # Just get one line from the standard in
-            user_input = sys.stdin.readline()
+            user_input = input()
 
             try:
                 input_handler = _USER_INPUT_ACTIONS[self._current_input_desc["type"]]
