@@ -235,7 +235,7 @@ def handle_user_input_text(text, *args):
     """Handle some raw textual input by the user."""
     del args
 
-    converted = text.strip().lstrip()
+    converted = text.strip()
     if len(converted):
         return converted
     else:
