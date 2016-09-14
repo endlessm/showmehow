@@ -340,8 +340,8 @@ class PracticeTaskStateMachine(object):
         try:
             task_desc, input_desc = self._service.call_get_task_description_finish(result)
         except Exception as error:
-            print("Getting task description for {} failed: {}".format(self._task,
-                                                                      error))
+            sys.stderr.write("Getting task description for {} failed: {}\n".format(self._task,
+                                                                                   error))
 
         print_lines_slowly("\n".join(textwrap.wrap(task_desc)))
         self._current_input_desc = json.loads(input_desc)
@@ -355,8 +355,8 @@ class PracticeTaskStateMachine(object):
         try:
             responses, next_task_id = self._service.call_attempt_lesson_remote_finish(result)
         except Exception as error:
-            print("Internal error in attempting {}, {}".format(self._task,
-                                                               error))
+            sys.stderr.write("Internal error in attempting {}, {}\n".format(self._task,
+                                                                            error))
 
         for response in json.loads(responses):
             show_response(response)
@@ -428,7 +428,7 @@ def create_service():
                                                       "/com/endlessm/Showmehow/Service")
     # Display any warnings that came through from the service.
     for warning in service.call_get_warnings_sync():
-        print("Service warning: " + warning[0])
+        sys.stderr.write("Service warning: {}\n".format(warning[0]))
 
     return service
 
