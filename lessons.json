@@ -247,5 +247,109 @@
                 }
             }
         }
-    }
+    },
+    {
+        "name": "navigation",
+        "available_to": ["console"],
+        "desc": "Navigate your file system",
+        "entry": "list",
+        "practice": {
+            "list": {
+                "task": "On the command line, you can show all the files and folders in the directory you're currently in, just like in the file manager. To do this, use the 'ls' command. Just type after the $ ls",
+                "effects": {
+                    "success": {
+                        "reply": "I bet you've never seen some of these files before. Lets have a look at what they are...",
+                        "move_to": "list_child"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, try listing the files again, I didn't see what I expected to see"
+                    }
+                }
+            },
+            "list_child": {
+                "task": "You can also see what's inside any particular folder. Try listing the contents of /home",
+                "effects": {
+                    "success": {
+                        "reply": "See anything familiar in there? Every user on the system has their own directory.",
+                        "move_to": "pwd"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, are you sure that is /home?"
+                    }
+                }
+            },
+            "pwd": {
+                "task": "You might wonder what folder you're in right now? You can find out with 'pwd'",
+                "effects": {
+                    "success": {
+                        "reply": "Wow, that's a short folder name. In fact, you're in what's called the 'root' directory, which is where all the operating system files are stored",
+                        "move_to": "cd_and_cmd"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, are you sure that is /home?"
+                    }
+                }
+            },
+            "cd_and_cmd": {
+                "task": "You can change the working directory at any time with the 'cd' command, short for 'change directory'. You can also use '&&' to chain commands together. Try $ cd home && ls",
+                "effects": {
+                    "success": {
+                        "reply": "Just as expected! When you change the working directory with cd you are changing the context in which a command runs, so the 'ls' command listed what was in 'home' directory.",
+                        "move_to": "cd_home_and_cmd"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, are you sure that is /home you listed?"
+                    }
+                }
+            },
+            "cd_home_and_cmd": {
+                "task": "You're probably wondering if there's a quick way to get into your home directory, since that's where you usually start. Turns out there is - the tilde (~, just above the Tab key) is a shortcut that always expands to the path of your home directory. Why don't you try listing what's in your home directory?",
+                "effects": {
+                    "success": {
+                        "reply": "Go check if that's what you expected in the file manager!",
+                        "move_to": "mkdir"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, are sure you listed your home directory??"
+                    }
+                }
+            },
+            "mkdir": {
+                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Why don't you try making a folder called ~/code? Remember that the ~ will expand to your home directory!",
+                "effects": {
+                    "success": {
+                        "reply": "Perhaps it might be worth checking in the file mananger to see if this folder was there!",
+                        "move_to": "touch"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, I didn't see the directory. Did you make a folder named 'code' in your home directory?"
+                    }
+                }
+            },
+            "touch": {
+                "task": "Now that we can make a directory, how about we try making a file, in our ~/code directory? Try making a file called 'secret.txt' in ~/code by using the 'touch' command.",
+                "effects": {
+                    "success": {
+                        "reply": "Lets check that the file was there!",
+                        "move_to": "write_to_secret"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, I didn't see the file. Did you make a file named 'secret.txt' in ~/code?"
+                    }
+                }
+            },
+            "write_to_secret": {
+                "task": "Hey! Why don't we do something exciting and write down the academy password in the file we just created? Remember, it was 'kittens'. A quick shortcut to write something to a file is to use the redirect operator '>' after the command, which redirects its output to a file. One common pattern is to use the 'echo' command along with the redirect operator to overwrite a file. For instance, $ echo 'dogs' > cats.txt . Try writing 'kittens' to ~/code/secret.txt",
+                "effects": {
+                    "success": {
+                        "reply": "Sweet, easy to find now!",
+                        "completes_lesson": true
+                    },
+                    "failure": {
+                        "reply": "Did you write 'kittens' to that file?"
+                    }
+                }
+            }
+        }
+     }
 ]

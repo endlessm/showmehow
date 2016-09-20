@@ -368,7 +368,7 @@ def main(argv=None):
 
         unlocked_tasks = [
             [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
-            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong']
+            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong', 'navigation']
         ]
 
     try:
