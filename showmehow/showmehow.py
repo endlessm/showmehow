@@ -281,17 +281,14 @@ class PracticeTaskStateMachine(object):
             return True
 
         if self._state == "waiting":
-            # Just get one line from the standard in
-            user_input = input()
-
-            input_handler = _USER_INPUT_ACTIONS["text"]
-            converted_input = input_handler(user_input)
+            # Just get one line from the standard in without the line break
+            user_input = sys.stdin.readline().rstrip("\n")
 
             # Submit this to the service and wait for the result
             self._state = "submit"
             self._service.call_attempt_lesson_remote(self._lesson,
                                                      self._task,
-                                                     converted_input,
+                                                     user_input,
                                                      None,
                                                      self.handle_attempt_lesson_remote)
         return True
