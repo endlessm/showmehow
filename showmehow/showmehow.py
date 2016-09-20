@@ -304,7 +304,6 @@ class PracticeTaskStateMachine(object):
         self._state = "fetching"
 
         self._service.connect("lessons-changed", self.handle_lessons_changed)
-        self._service.connect("lesson-events-satisfied", self.lesson_events_satisfied)
         GLib.io_add_watch(sys.stdin.fileno(),
                           GLib.PRIORITY_DEFAULT,
                           GLib.IO_IN,
