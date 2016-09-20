@@ -124,17 +124,6 @@ def show_response(response):
                            response["type"])
 
 
-def handle_input_text(prompt):
-    """Handle free text input, closure."""
-    def inner(*args):
-        """Get prompt"""
-        del args
-
-        return input(prompt)
-
-    return inner
-
-
 def display_input_prompt(prompt):
     """Display prompt."""
     def _internal(*args):
