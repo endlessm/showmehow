@@ -201,20 +201,14 @@ def display_input_prompt(prompt):
     return _internal
 
 
-_DISPLAY_INPUT_ACTIONS = {
-    "choice": display_input_choice,
-    "text": display_input_prompt(">"),
-    "console": display_input_prompt("$")
-}
-
-def display_input(input_desc):
+def display_input():
     """Display a prompt to the user depending on the input type."""
     try:
-        handler = _DISPLAY_INPUT_ACTIONS[input_desc["type"]]
+        handler = display_input_prompt("$")
     except KeyError:
         return
 
-    return handler(input_desc["settings"])
+    return handler()
 
 
 def handle_user_input_choice(text, choices):
