@@ -347,7 +347,7 @@ class PracticeTaskStateMachine(object):
         assert self._state == "submit"
 
         try:
-            attemptResult, _ = self._service.call_attempt_lesson_remote_finish(result)
+            attemptResult = self._service.call_attempt_lesson_remote_finish(result)
         except Exception as error:
             sys.stderr.write("Internal error in attempting {}, {}\n".format(self._task,
                                                                             error))
