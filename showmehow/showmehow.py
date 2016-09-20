@@ -124,24 +124,6 @@ def show_response(response):
                            response["type"])
 
 
-def handle_input_choice(choices, _):
-    """Given some choices, allow the user to select a choice."""
-    choices = OrderedDict(choices)
-    selected_index = len(choices)
-
-    while not selected_index < len(choices):
-        for index, desc in enumerate(choices.values()):
-            print("({}) {}".format(index + 1, desc["text"]))
-
-        # Show the choices and allow the user to pick on as an index
-        try:
-            selected_index = int(input("Choice: ")) - 1
-        except ValueError:
-            selected_index = len(choices)
-
-    return list(choices.keys())[selected_index]
-
-
 def handle_input_text(prompt):
     """Handle free text input, closure."""
     def inner(*args):
@@ -151,41 +133,6 @@ def handle_input_text(prompt):
         return input(prompt)
 
     return inner
-
-
-def handle_input_external_events(settings, monitor):
-    """Handle external events input."""
-    event_status = {
-        "occurred": False
-    }
-
-    def signal_handler(monitor, name):
-        """Return a function to handle a signal."""
-        event_status["occurred"] = True
-
-    monitor.monitor_signal("lesson-events-satisfied", signal_handler)
-
-    # Continually pump events until the flag is set
-    while not event_status["occurred"]:
-        monitor.dispatch_queued_signal_events()
-
-    return ""
-
-_INPUT_ACTIONS = {
-    "choice": handle_input_choice,
-    "text": handle_input_text(""),
-    "console": handle_input_text("$ "),
-    "external_events": handle_input_external_events
-}
-
-def display_input_choice(choices):
-    """Display available choices."""
-    choices = OrderedDict(choices)
-    for index, desc in enumerate(choices.values()):
-        print("({}) {}".format(index + 1, desc["text"]))
-
-    sys.stdout.write("Choice: ")
-    sys.stdout.flush()
 
 
 def display_input_prompt(prompt):
@@ -211,24 +158,6 @@ def display_input():
     return handler()
 
 
-def handle_user_input_choice(text, choices):
-    """Handle a choice by the user.
-
-    If the user makes a wrong choice, show input_desc again.
-    """
-    choices = OrderedDict(choices)
-
-    try:
-        selected_index = int(text) - 1
-    except ValueError:
-        selected_index = len(choices)
-
-    if selected_index < len(choices):
-        return list(choices.keys())[selected_index]
-    else:
-        return None
-
-
 def handle_user_input_text(text, *args):
     """Handle some raw textual input by the user."""
     del args
@@ -238,30 +167,6 @@ def handle_user_input_text(text, *args):
         return converted
     else:
         return None
-
-
-def handle_user_input_external_events(*args):
-    """Handle user input when an external event happens."""
-    del args
-    return ""
-
-
-_USER_INPUT_ACTIONS = {
-    "choice": handle_user_input_choice,
-    "text": handle_user_input_text,
-    "console": handle_user_input_text,
-    "external_events": handle_user_input_external_events
-}
-
-
-def handle_input(text, input_desc):
-    """Given some input type, handle the input."""
-    try:
-        return _INPUT_ACTIONS[input_desc["type"]](text,
-                                                  input_desc["settings"])
-    except KeyError:
-        raise RuntimeError("Don't know how to handle input type " +
-                           input_desc["type"])
 
 
 _INPUT_STATE_TRANSITIONS = defaultdict(lambda: "waiting",
