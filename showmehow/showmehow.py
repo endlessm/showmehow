@@ -268,6 +268,11 @@ _INPUT_STATE_TRANSITIONS = defaultdict(lambda: "waiting",
                                        external_events="waiting_lesson_events")
 
 
+def find_task_json(json_file, lesson, task):
+    """Find a descriptor associated with a given lesson and task."""
+    return [l for l in json_file if l["name"] == lesson][0]["practice"][task]
+
+
 class PracticeTaskStateMachine(object):
     """A state machine representing a currently-practiced task.
 
@@ -283,7 +288,7 @@ class PracticeTaskStateMachine(object):
       S -> F, E
     ."""
 
-    def __init__(self, service, lesson, task):
+    def __init__(self, service, lessons, lesson, task):
         """Initialise this state machine with the service.
 
         Connect to the relevant signals to handle state transitions.
@@ -292,6 +297,7 @@ class PracticeTaskStateMachine(object):
 
         self._service = service
         self._lesson = lesson
+        self._lessons = lessons
         self._task = task
         self._current_input_desc = None
         self._loop = GLib.MainLoop()
@@ -305,10 +311,7 @@ class PracticeTaskStateMachine(object):
                           self.handle_user_input)
 
         # Display content for the entry point
-        self._service.call_get_task_description(self._lesson,
-                                                self._task,
-                                                None,
-                                                self.handle_task_description_fetched)
+        self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
 
     def start(self):
         """Start the state machine and the underlying main loop."""
@@ -332,47 +335,48 @@ class PracticeTaskStateMachine(object):
                                                      None,
                                                      self.handle_attempt_lesson_remote)
 
-    def handle_task_description_fetched(self, source, result):
+    def handle_task_description_fetched(self, task_desc):
         """Finish getting the task description and move to W."""
         assert self._state == "fetching"
 
-        try:
-            task_desc, input_desc = self._service.call_get_task_description_finish(result)
-        except Exception as error:
-            sys.stderr.write("Getting task description for {} failed: {}\n".format(self._task,
-                                                                                   error))
-
-        print_lines_slowly("\n".join(textwrap.wrap(task_desc)))
-        self._current_input_desc = json.loads(input_desc)
-        self._state = _INPUT_STATE_TRANSITIONS[self._current_input_desc["type"]]
-        display_input(self._current_input_desc)
+        print_lines_slowly("\n".join(textwrap.wrap(task_desc["task"])))
+        self._state = "waiting"
+        display_input()
 
     def handle_attempt_lesson_remote(self, source, result):
         """Finish handling the lesson and move to F or E."""
         assert self._state == "submit"
 
         try:
-            responses, next_task_id = self._service.call_attempt_lesson_remote_finish(result)
+            attemptResult, _ = self._service.call_attempt_lesson_remote_finish(result)
         except Exception as error:
             sys.stderr.write("Internal error in attempting {}, {}\n".format(self._task,
                                                                             error))
 
-        for response in json.loads(responses):
+        # Look up the response in the lessons descriptor and see if there is a next task
+        attemptResult = json.loads(attemptResult)
+        result = attemptResult["result"]
+        responses = attemptResult["responses"]
+        result_desc = find_task_json(self._lessons, self._lesson, self._task)["effects"][result]
+        next_task_id = result_desc.get("move_to", self._task)
+        completes_lesson = result_desc.get("completes_lesson", False)
+
+        # Print any relevant responses, wrapped
+        for response in responses:
             show_response(response)
 
-        if next_task_id == self._task:
-            display_input(self._current_input_desc)
-            self._state = _INPUT_STATE_TRANSITIONS[self._current_input_desc["type"]]
-        elif next_task_id == "":
+        # Print the reply
+        print_lines_slowly(result_desc["reply"])
+
+        if completes_lesson:
             self._loop.quit()
+        elif next_task_id == self._task:
+            display_input()
+            self._state = "waiting"
         else:
             self._state = "fetching"
-            self._current_input_desc = None
             self._task = next_task_id
-            self._service.call_get_task_description(self._lesson,
-                                                    self._task,
-                                                    None,
-                                                    self.handle_task_description_fetched)
+            self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
 
     def handle_user_input(self, stdin_fd, events):
         """Handle user input from stdin.
@@ -469,11 +473,26 @@ def main(argv=None):
 
     arguments = parser.parse_args(argv or sys.argv[1:])
 
+    with open('lessons.json') as lessons_stream:
+        lessons = json.load(lessons_stream)
+
     if os.environ.get("NONINTERACTIVE"):
         return noninteractive_predefined_script(arguments)
     else:
         service = create_service()
-        unlocked_tasks = service.call_get_unlocked_lessons_sync("console")
+        task_name_desc_pairs = {
+            l["name"]: l["desc"]
+            for l in lessons
+        }
+        task_name_entry_pairs = {
+            l["name"]: l["entry"]
+            for l in lessons
+        }
+
+        unlocked_tasks = [
+            [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
+            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong']
+        ]
 
     try:
         task, desc, entry = [
@@ -486,4 +505,4 @@ def main(argv=None):
             print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
-    return PracticeTaskStateMachine(service, task, entry).start()
+    return PracticeTaskStateMachine(service, lessons, task, entry).start()
