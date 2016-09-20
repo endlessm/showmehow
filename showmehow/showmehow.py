@@ -391,29 +391,16 @@ class PracticeTaskStateMachine(object):
             # Just get one line from the standard in
             user_input = input()
 
-            try:
-                input_handler = _USER_INPUT_ACTIONS[self._current_input_desc["type"]]
-            except KeyError:
-                raise RuntimeError("Don't know how to handle input type " +
-                                   self._current_input_desc["type"])
+            input_handler = _USER_INPUT_ACTIONS["text"]
+            converted_input = input_handler(user_input)
 
-            converted_input = input_handler(user_input,
-                                            self._current_input_desc["settings"])
-
-            # Two possible state transitions, W -> W
-            # or W -> S. W -> W happens if input_handler
-            # returns None, otherwise we return the result to
-            # the service and switch to S.
-            if not converted_input:
-                display_input_prompt(self._current_input_desc)
-            else:
-                # Submit this to the service and wait for the result
-                self._state = "submit"
-                self._service.call_attempt_lesson_remote(self._lesson,
-                                                         self._task,
-                                                         converted_input,
-                                                         None,
-                                                         self.handle_attempt_lesson_remote)
+            # Submit this to the service and wait for the result
+            self._state = "submit"
+            self._service.call_attempt_lesson_remote(self._lesson,
+                                                     self._task,
+                                                     converted_input,
+                                                     None,
+                                                     self.handle_attempt_lesson_remote)
         return True
 
 
