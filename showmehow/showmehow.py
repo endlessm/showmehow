@@ -241,15 +241,15 @@ class PracticeTaskStateMachine(object):
         assert self._state == "submit"
 
         try:
-            attemptResult = self._service.call_attempt_lesson_remote_finish(result)
+            attempt_result = self._service.call_attempt_lesson_remote_finish(result)
         except Exception as error:
             sys.stderr.write("Internal error in attempting {}, {}\n".format(self._task,
                                                                             error))
 
         # Look up the response in the lessons descriptor and see if there is a next task
-        attemptResult = json.loads(attemptResult)
-        result = attemptResult["result"]
-        responses = attemptResult["responses"]
+        attempt_result = json.loads(attempt_result)
+        result = attempt_result["result"]
+        responses = attempt_result["responses"]
         result_desc = find_task_json(self._lessons, self._lesson, self._task)["effects"][result]
         next_task_id = result_desc.get("move_to", self._task)
         completes_lesson = result_desc.get("completes_lesson", False)
