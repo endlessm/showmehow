@@ -251,9 +251,22 @@
     {
         "name": "navigation",
         "available_to": ["console"],
+        "requires_session": true,
         "desc": "Navigate your file system",
-        "entry": "list",
+        "entry": "change_to_root",
         "practice": {
+            "change_to_root": {
+                "task": "Lets start at the top and go to the top-down view of Endless. We'll change to the 'root directory', which is the very highest folder in your system. To do that, you just need to type $ cd /",
+                "effects": {
+                    "success": {
+                        "reply": "Time to have a look around.",
+                        "move_to": "list"
+                    },
+                    "failure": {
+                        "reply": "Are you at the very very very top? Its just four characters! $ cd /"
+                    }
+                }
+            },
             "list": {
                 "task": "On the command line, you can show all the files and folders in the directory you're currently in, just like in the file manager. To do this, use the 'ls' command. Just type after the $ ls",
                 "effects": {
@@ -283,6 +296,18 @@
                 "effects": {
                     "success": {
                         "reply": "Wow, that's a short folder name. In fact, you're in what's called the 'root' directory, which is where all the operating system files are stored",
+                        "move_to": "cd"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, are you sure that is /home?"
+                    }
+                }
+            },
+            "cd": {
+                "task": "You can change the 'working directory' with the 'cd' command. Lets try changing into the 'home' directory. Just like we did before, its 'cd' followed by the name of the directory.",
+                "effects": {
+                    "success": {
+                        "reply": "Great! The context is now changed and you're in 'home'.",
                         "move_to": "cd_and_cmd"
                     },
                     "failure": {
@@ -291,19 +316,31 @@
                 }
             },
             "cd_and_cmd": {
-                "task": "You can change the working directory at any time with the 'cd' command, short for 'change directory'. You can also use '&&' to chain commands together. Try $ cd home && ls",
+                "task": "You can change the working directory at any time with the 'cd' command, short for 'change directory'. You can also use '&&' to chain commands together. Try $ cd /home && ls",
                 "effects": {
                     "success": {
                         "reply": "Just as expected! When you change the working directory with cd you are changing the context in which a command runs, so the 'ls' command listed what was in 'home' directory.",
-                        "move_to": "cd_home_and_cmd"
+                        "move_to": "cd_home_dir"
                     },
                     "failure": {
                         "reply": "Hmmm, are you sure that is /home you listed?"
                     }
                 }
             },
-            "cd_home_and_cmd": {
-                "task": "You're probably wondering if there's a quick way to get into your home directory, since that's where you usually start. Turns out there is - the tilde (~, just above the Tab key) is a shortcut that always expands to the path of your home directory. Why don't you try listing what's in your home directory?",
+            "cd_home_dir": {
+                "task": "You're probably wondering if there's a quick way to get into your home directory, since that's where you usually start. Turns out there is - the tilde (~, just above the Tab key) is a shortcut that always expands to the path of your home directory. Why don't you try changing to your home directory?",
+                "effects": {
+                    "success": {
+                        "reply": "I'm sure you'll see some familiar stuff in here!",
+                        "move_to": "list_home_dir"
+                    },
+                    "failure": {
+                        "reply": "Hmmm, are sure you changed into your home directory??"
+                    }
+                }
+            },
+            "list_home_dir": {
+                "task": "Now that you're here, why not list the contents of it. Just like before.",
                 "effects": {
                     "success": {
                         "reply": "Go check if that's what you expected in the file manager!",
@@ -315,7 +352,7 @@
                 }
             },
             "mkdir": {
-                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Why don't you try making a folder called ~/code? Remember that the ~ will expand to your home directory!",
+                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Why don't you try making a folder called ~/code? Remember that the ~ will expand to your home directory! Oh - and also, you might want to provide the '-p' switch to 'mkdir' just in case that folder is already there! So $ mkdir -p (the directory you're going to create)",
                 "effects": {
                     "success": {
                         "reply": "Perhaps it might be worth checking in the file mananger to see if this folder was there!",
