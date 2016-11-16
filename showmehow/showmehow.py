@@ -213,9 +213,8 @@ class PracticeTaskStateMachine(object):
         This might involve opening a session with the service if
         the underlying lesson requires it.
         """
-        requires_session = [
-            l for l in self._lessons if l["name"] == self._lesson
-        ][0].get("requires_session")
+        requires_session = next((l.get("requires_session") for l in self._lessons
+                                if l["name"] == self._lesson), False)
 
         if requires_session:
             self._session = self._service.call_open_session_sync(None)
