@@ -232,7 +232,7 @@ class PracticeTaskStateMachine(object):
         """Finish getting the task description and move to W."""
         assert self._state == "fetching"
 
-        print_lines_slowly("\n".join(textwrap.wrap(task_desc["task"])))
+        show_response_scrolled(task_desc["task"])
         self._state = "waiting"
         display_input()
 
@@ -259,7 +259,7 @@ class PracticeTaskStateMachine(object):
             show_response(response)
 
         # Print the reply
-        print_lines_slowly(result_desc["reply"])
+        show_response_scrolled(result_desc["reply"])
 
         if completes_lesson:
             self._loop.quit()
@@ -377,9 +377,9 @@ def main(argv=None):
         ][0]
     except IndexError:
         if arguments.task:
-            print_lines_slowly("I don't know how to do task {}".format(arguments.task))
+            show_response_scrolled("I don't know how to do task {}".format(arguments.task))
         else:
-            print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
+            show_response_scrolled("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
     return PracticeTaskStateMachine(service, lessons, task, entry).start()
