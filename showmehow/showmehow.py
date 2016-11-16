@@ -196,6 +196,7 @@ class PracticeTaskStateMachine(object):
         self._current_input_desc = None
         self._loop = GLib.MainLoop()
         self._state = "fetching"
+        self._session = 0
 
         self._service.connect("lessons-changed", self.handle_lessons_changed)
         GLib.io_add_watch(sys.stdin.fileno(),
@@ -205,6 +206,33 @@ class PracticeTaskStateMachine(object):
 
         # Display content for the entry point
         self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
+
+    def __enter__(self):
+        """Enter the context of this PracticeTaskStateMachine.
+
+        This might involve opening a session with the service if
+        the underlying lesson requires it.
+        """
+        requires_session = [
+            l for l in self._lessons if l["name"] == self._lesson
+        ][0].get("requires_session")
+
+        if requires_session:
+            self._session = self._service.call_open_session_sync(None)
+
+        return self
+
+    def __exit__(self, exc_type, value, traceback):
+        """Exit the context of this PracticeTaskStateMachine.
+
+        If we have a session open, close it.
+        """
+        del exc_type
+        del value
+        del traceback
+
+        if self._session:
+            self._session = self._service.call_close_session_sync(self._session, None)
 
     def start(self):
         """Start the state machine and the underlying main loop."""
@@ -222,7 +250,8 @@ class PracticeTaskStateMachine(object):
         if (self._state == "waiting_lesson_events" and
             self._lesson == lesson and self._task == task):
             self._state = "submit"
-            self._service.call_attempt_lesson_remote(self._lesson,
+            self._service.call_attempt_lesson_remote(self._session,
+                                                     self._lesson,
                                                      self._task,
                                                      "",
                                                      None,
@@ -286,7 +315,8 @@ class PracticeTaskStateMachine(object):
 
             # Submit this to the service and wait for the result
             self._state = "submit"
-            self._service.call_attempt_lesson_remote(self._lesson,
+            self._service.call_attempt_lesson_remote(self._session,
+                                                     self._lesson,
                                                      self._task,
                                                      user_input,
                                                      None,
@@ -382,4 +412,5 @@ def main(argv=None):
             show_response_scrolled("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
-    return PracticeTaskStateMachine(service, lessons, task, entry).start()
+    with PracticeTaskStateMachine(service, lessons, task, entry) as machine:
+        machine.start()
