@@ -271,9 +271,8 @@ class PracticeTaskStateMachine(object):
         try:
             attempt_result_json = self._service.call_attempt_lesson_remote_finish(result)
         except Exception as error:
-            sys.stderr.write("Internal error in attempting {}, {}\n".format(self._task,
+            raise SystemExit("Internal error in attempting {}, {}\n".format(self._task,
                                                                             error))
-            sys.exit(1)
 
         # Look up the response in the lessons descriptor and see if there is a next task
         attempt_result = json.loads(attempt_result_json)
