@@ -124,70 +124,6 @@ def show_response(response):
                            response["type"])
 
 
-def handle_input_choice(choices, _):
-    """Given some choices, allow the user to select a choice."""
-    choices = OrderedDict(choices)
-    selected_index = len(choices)
-
-    while not selected_index < len(choices):
-        for index, desc in enumerate(choices.values()):
-            print("({}) {}".format(index + 1, desc["text"]))
-
-        # Show the choices and allow the user to pick on as an index
-        try:
-            selected_index = int(input("Choice: ")) - 1
-        except ValueError:
-            selected_index = len(choices)
-
-    return list(choices.keys())[selected_index]
-
-
-def handle_input_text(prompt):
-    """Handle free text input, closure."""
-    def inner(*args):
-        """Get prompt"""
-        del args
-
-        return input(prompt)
-
-    return inner
-
-
-def handle_input_external_events(settings, monitor):
-    """Handle external events input."""
-    event_status = {
-        "occurred": False
-    }
-
-    def signal_handler(monitor, name):
-        """Return a function to handle a signal."""
-        event_status["occurred"] = True
-
-    monitor.monitor_signal("lesson-events-satisfied", signal_handler)
-
-    # Continually pump events until the flag is set
-    while not event_status["occurred"]:
-        monitor.dispatch_queued_signal_events()
-
-    return ""
-
-_INPUT_ACTIONS = {
-    "choice": handle_input_choice,
-    "text": handle_input_text(""),
-    "console": handle_input_text("$ "),
-    "external_events": handle_input_external_events
-}
-
-def display_input_choice(choices):
-    """Display available choices."""
-    choices = OrderedDict(choices)
-    for index, desc in enumerate(choices.values()):
-        print("({}) {}".format(index + 1, desc["text"]))
-
-    sys.stdout.write("Choice: ")
-    sys.stdout.flush()
-
-
 def display_input_prompt(prompt):
     """Display prompt."""
     def _internal(*args):
@@ -201,38 +137,14 @@ def display_input_prompt(prompt):
     return _internal
 
 
-_DISPLAY_INPUT_ACTIONS = {
-    "choice": display_input_choice,
-    "text": display_input_prompt(">"),
-    "console": display_input_prompt("$")
-}
-
-def display_input(input_desc):
+def display_input():
     """Display a prompt to the user depending on the input type."""
     try:
-        handler = _DISPLAY_INPUT_ACTIONS[input_desc["type"]]
+        handler = display_input_prompt("$")
     except KeyError:
         return
 
-    return handler(input_desc["settings"])
-
-
-def handle_user_input_choice(text, choices):
-    """Handle a choice by the user.
-
-    If the user makes a wrong choice, show input_desc again.
-    """
-    choices = OrderedDict(choices)
-
-    try:
-        selected_index = int(text) - 1
-    except ValueError:
-        selected_index = len(choices)
-
-    if selected_index < len(choices):
-        return list(choices.keys())[selected_index]
-    else:
-        return None
+    return handler()
 
 
 def handle_user_input_text(text, *args):
@@ -246,32 +158,13 @@ def handle_user_input_text(text, *args):
         return None
 
 
-def handle_user_input_external_events(*args):
-    """Handle user input when an external event happens."""
-    del args
-    return ""
-
-
-_USER_INPUT_ACTIONS = {
-    "choice": handle_user_input_choice,
-    "text": handle_user_input_text,
-    "console": handle_user_input_text,
-    "external_events": handle_user_input_external_events
-}
-
-
-def handle_input(text, input_desc):
-    """Given some input type, handle the input."""
-    try:
-        return _INPUT_ACTIONS[input_desc["type"]](text,
-                                                  input_desc["settings"])
-    except KeyError:
-        raise RuntimeError("Don't know how to handle input type " +
-                           input_desc["type"])
-
-
 _INPUT_STATE_TRANSITIONS = defaultdict(lambda: "waiting",
                                        external_events="waiting_lesson_events")
+
+
+def find_task_json(json_file, lesson, task):
+    """Find a descriptor associated with a given lesson and task."""
+    return [l for l in json_file if l["name"] == lesson][0]["practice"][task]
 
 
 class PracticeTaskStateMachine(object):
@@ -289,7 +182,7 @@ class PracticeTaskStateMachine(object):
       S -> F, E
     ."""
 
-    def __init__(self, service, lesson, task):
+    def __init__(self, service, lessons, lesson, task):
         """Initialise this state machine with the service.
 
         Connect to the relevant signals to handle state transitions.
@@ -298,23 +191,20 @@ class PracticeTaskStateMachine(object):
 
         self._service = service
         self._lesson = lesson
+        self._lessons = lessons
         self._task = task
         self._current_input_desc = None
         self._loop = GLib.MainLoop()
         self._state = "fetching"
 
         self._service.connect("lessons-changed", self.handle_lessons_changed)
-        self._service.connect("lesson-events-satisfied", self.lesson_events_satisfied)
         GLib.io_add_watch(sys.stdin.fileno(),
                           GLib.PRIORITY_DEFAULT,
                           GLib.IO_IN,
                           self.handle_user_input)
 
         # Display content for the entry point
-        self._service.call_get_task_description(self._lesson,
-                                                self._task,
-                                                None,
-                                                self.handle_task_description_fetched)
+        self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
 
     def start(self):
         """Start the state machine and the underlying main loop."""
@@ -338,47 +228,48 @@ class PracticeTaskStateMachine(object):
                                                      None,
                                                      self.handle_attempt_lesson_remote)
 
-    def handle_task_description_fetched(self, source, result):
+    def handle_task_description_fetched(self, task_desc):
         """Finish getting the task description and move to W."""
         assert self._state == "fetching"
 
-        try:
-            task_desc, input_desc = self._service.call_get_task_description_finish(result)
-        except Exception as error:
-            sys.stderr.write("Getting task description for {} failed: {}\n".format(self._task,
-                                                                                   error))
-
-        print_lines_slowly("\n".join(textwrap.wrap(task_desc)))
-        self._current_input_desc = json.loads(input_desc)
-        self._state = _INPUT_STATE_TRANSITIONS[self._current_input_desc["type"]]
-        display_input(self._current_input_desc)
+        print_lines_slowly("\n".join(textwrap.wrap(task_desc["task"])))
+        self._state = "waiting"
+        display_input()
 
     def handle_attempt_lesson_remote(self, source, result):
         """Finish handling the lesson and move to F or E."""
         assert self._state == "submit"
 
         try:
-            responses, next_task_id = self._service.call_attempt_lesson_remote_finish(result)
+            attempt_result_json = self._service.call_attempt_lesson_remote_finish(result)
         except Exception as error:
             sys.stderr.write("Internal error in attempting {}, {}\n".format(self._task,
                                                                             error))
 
-        for response in json.loads(responses):
+        # Look up the response in the lessons descriptor and see if there is a next task
+        attempt_result = json.loads(attempt_result_json)
+        result = attempt_result["result"]
+        responses = attempt_result["responses"]
+        result_desc = find_task_json(self._lessons, self._lesson, self._task)["effects"][result]
+        next_task_id = result_desc.get("move_to", self._task)
+        completes_lesson = result_desc.get("completes_lesson", False)
+
+        # Print any relevant responses, wrapped
+        for response in responses:
             show_response(response)
 
-        if next_task_id == self._task:
-            display_input(self._current_input_desc)
-            self._state = _INPUT_STATE_TRANSITIONS[self._current_input_desc["type"]]
-        elif next_task_id == "":
+        # Print the reply
+        print_lines_slowly(result_desc["reply"])
+
+        if completes_lesson:
             self._loop.quit()
+        elif next_task_id == self._task:
+            display_input()
+            self._state = "waiting"
         else:
             self._state = "fetching"
-            self._current_input_desc = None
             self._task = next_task_id
-            self._service.call_get_task_description(self._lesson,
-                                                    self._task,
-                                                    None,
-                                                    self.handle_task_description_fetched)
+            self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
 
     def handle_user_input(self, stdin_fd, events):
         """Handle user input from stdin.
@@ -390,32 +281,16 @@ class PracticeTaskStateMachine(object):
             return True
 
         if self._state == "waiting":
-            # Just get one line from the standard in
-            user_input = input()
+            # Just get one line from the standard in without the line break
+            user_input = sys.stdin.readline().rstrip("\n")
 
-            try:
-                input_handler = _USER_INPUT_ACTIONS[self._current_input_desc["type"]]
-            except KeyError:
-                raise RuntimeError("Don't know how to handle input type " +
-                                   self._current_input_desc["type"])
-
-            converted_input = input_handler(user_input,
-                                            self._current_input_desc["settings"])
-
-            # Two possible state transitions, W -> W
-            # or W -> S. W -> W happens if input_handler
-            # returns None, otherwise we return the result to
-            # the service and switch to S.
-            if not converted_input:
-                display_input_prompt(self._current_input_desc)
-            else:
-                # Submit this to the service and wait for the result
-                self._state = "submit"
-                self._service.call_attempt_lesson_remote(self._lesson,
-                                                         self._task,
-                                                         converted_input,
-                                                         None,
-                                                         self.handle_attempt_lesson_remote)
+            # Submit this to the service and wait for the result
+            self._state = "submit"
+            self._service.call_attempt_lesson_remote(self._lesson,
+                                                     self._task,
+                                                     user_input,
+                                                     None,
+                                                     self.handle_attempt_lesson_remote)
         return True
 
 
@@ -475,11 +350,26 @@ def main(argv=None):
 
     arguments = parser.parse_args(argv or sys.argv[1:])
 
+    with open('lessons.json') as lessons_stream:
+        lessons = json.load(lessons_stream)
+
     if os.environ.get("NONINTERACTIVE"):
         return noninteractive_predefined_script(arguments)
     else:
         service = create_service()
-        unlocked_tasks = service.call_get_unlocked_lessons_sync("console")
+        task_name_desc_pairs = {
+            l["name"]: l["desc"]
+            for l in lessons
+        }
+        task_name_entry_pairs = {
+            l["name"]: l["entry"]
+            for l in lessons
+        }
+
+        unlocked_tasks = [
+            [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
+            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong']
+        ]
 
     try:
         task, desc, entry = [
@@ -492,4 +382,4 @@ def main(argv=None):
             print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
-    return PracticeTaskStateMachine(service, task, entry).start()
+    return PracticeTaskStateMachine(service, lessons, task, entry).start()
