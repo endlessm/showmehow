@@ -196,6 +196,7 @@ class PracticeTaskStateMachine(object):
         self._current_input_desc = None
         self._loop = GLib.MainLoop()
         self._state = "fetching"
+        self._session = 0
 
         self._service.connect("lessons-changed", self.handle_lessons_changed)
         GLib.io_add_watch(sys.stdin.fileno(),
@@ -205,6 +206,32 @@ class PracticeTaskStateMachine(object):
 
         # Display content for the entry point
         self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
+
+    def __enter__(self):
+        """Enter the context of this PracticeTaskStateMachine.
+
+        This might involve opening a session with the service if
+        the underlying lesson requires it.
+        """
+        requires_session = next((l.get("requires_session") for l in self._lessons
+                                if l["name"] == self._lesson), False)
+
+        if requires_session:
+            self._session = self._service.call_open_session_sync(None)
+
+        return self
+
+    def __exit__(self, exc_type, value, traceback):
+        """Exit the context of this PracticeTaskStateMachine.
+
+        If we have a session open, close it.
+        """
+        del exc_type
+        del value
+        del traceback
+
+        if self._session:
+            self._session = self._service.call_close_session_sync(self._session, None)
 
     def start(self):
         """Start the state machine and the underlying main loop."""
@@ -222,7 +249,8 @@ class PracticeTaskStateMachine(object):
         if (self._state == "waiting_lesson_events" and
             self._lesson == lesson and self._task == task):
             self._state = "submit"
-            self._service.call_attempt_lesson_remote(self._lesson,
+            self._service.call_attempt_lesson_remote(self._session,
+                                                     self._lesson,
                                                      self._task,
                                                      "",
                                                      None,
@@ -232,7 +260,7 @@ class PracticeTaskStateMachine(object):
         """Finish getting the task description and move to W."""
         assert self._state == "fetching"
 
-        print_lines_slowly("\n".join(textwrap.wrap(task_desc["task"])))
+        show_response_scrolled(task_desc["task"])
         self._state = "waiting"
         display_input()
 
@@ -243,7 +271,7 @@ class PracticeTaskStateMachine(object):
         try:
             attempt_result_json = self._service.call_attempt_lesson_remote_finish(result)
         except Exception as error:
-            sys.stderr.write("Internal error in attempting {}, {}\n".format(self._task,
+            raise SystemExit("Internal error in attempting {}, {}\n".format(self._task,
                                                                             error))
 
         # Look up the response in the lessons descriptor and see if there is a next task
@@ -259,7 +287,7 @@ class PracticeTaskStateMachine(object):
             show_response(response)
 
         # Print the reply
-        print_lines_slowly(result_desc["reply"])
+        show_response_scrolled(result_desc["reply"])
 
         if completes_lesson:
             self._loop.quit()
@@ -286,7 +314,8 @@ class PracticeTaskStateMachine(object):
 
             # Submit this to the service and wait for the result
             self._state = "submit"
-            self._service.call_attempt_lesson_remote(self._lesson,
+            self._service.call_attempt_lesson_remote(self._session,
+                                                     self._lesson,
                                                      self._task,
                                                      user_input,
                                                      None,
@@ -368,7 +397,7 @@ def main(argv=None):
 
         unlocked_tasks = [
             [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
-            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong']
+            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong', 'navigation']
         ]
 
     try:
@@ -377,9 +406,10 @@ def main(argv=None):
         ][0]
     except IndexError:
         if arguments.task:
-            print_lines_slowly("I don't know how to do task {}".format(arguments.task))
+            show_response_scrolled("I don't know how to do task {}".format(arguments.task))
         else:
-            print_lines_slowly("Hey, how are you? I can tell you about the following tasks:")
+            show_response_scrolled("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
-    return PracticeTaskStateMachine(service, lessons, task, entry).start()
+    with PracticeTaskStateMachine(service, lessons, task, entry) as machine:
+        machine.start()
