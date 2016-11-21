@@ -388,5 +388,143 @@
                 }
             }
         }
+     },
+     {
+         "name": "text",
+         "available_to": ["console"],
+         "requires_session": false,
+         "desc": "Process text like a ninja",
+         "entry": "cat",
+         "practice": {
+             "cat": {
+                 "task": "You can use the 'cat' command to read text from files. Why not check out the contents of sherlock.txt in this directory?",
+                 "effects": {
+                     "success": {
+                         "reply": "Great! Now lets see what else we can do with this file.",
+                         "move_to": "cat_grep"
+                     },
+                     "failure": {
+                         "reply": "That doesn't sound anything like sherlock! Get me that file!"
+                     }
+                 }
+             },
+             "cat_grep": {
+                 "task": "Sometimes (for big files) you might only want to see lines which have certain words in them. This is pretty common if you're seaching code for things. To filter out all lines which don't contain a particular word, you can use the 'grep' command. Try piping (|) the output of 'cat' on 'sherlock.txt' to grep and search for anything that talks abouut the year 1900 onwards (that means any word starting with 19).",
+                 "effects": {
+                     "success": {
+                         "reply": "See how that makes the needles a lot easier to find in the haystack?",
+                         "move_to": "grep_file"
+                     },
+                     "failure": {
+                         "reply": "I just need the lines talking about 1900 onwards. Remember that you can pipe things by using the | operator, for instance, cat 'kittens.txt' | grep cats"
+                     }
+                 }
+             },
+             "grep_file": {
+                 "task": "I lied. You don't actually have to pipe the output of 'cat' to 'grep' to search a file. You can just use 'grep' on the file directly. But I did show you the usefulness of 'streams' in the context of the shell. Why don't you try just using 'grep' directly on 'sherlock.txt' with the same query (everything to do with the 1900s).",
+                 "effects": {
+                     "success": {
+                         "reply": "Same result!",
+                         "move_to": "grep_extended_regex"
+                     },
+                     "failure": {
+                         "reply": "You should get the same result as piping it to cat. Just try `grep <expression> sherlock.txt`."
+                     }
+                 }
+             },
+             "grep_extended_regex": {
+                 "task": "But what if I told you I wanted to know about 1800 and 1900, or really anything to do with a year in that piece of text? You can use extended grep with a regular expression. There's way too much for me to tell you about them right now, but you can go to http://docs.activestate.com/komodo/4.4/regex-intro.html for some basic ones. Why don't you head over there, come back and type in a command using grep -E <regular expression> to find all lines with a 4-digit year?",
+                 "effects": {
+                     "success": {
+                         "reply": "There we go, you searched for two things at once! Bet you couldn't do that in a word processor!",
+                         "move_to": "grep_all"
+                     },
+                     "failure": {
+                         "reply": "Nope, I just need the lines with years in them, but that includes years in the 1800s as well! Have a look http://docs.activestate.com/komodo/4.4/regex-intro.html again and see if you can come up with a regular expression to give to `grep -E`."
+                     }
+                 }
+             },
+             "grep_all": {
+                 "task": "So now you can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it on the code/ directory. I'm looking for code that uses GSettings. You can a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
+                 "effects": {
+                     "success": {
+                         "reply": "Ah! Found them all! Thanks, that will be quite useful later on.",
+                         "move_to": "grep_all_regex"
+                     },
+                     "failure": {
+                         "reply": "Not quite what I was expecting. Sure you searched just for GSettings?"
+                     }
+                 }
+             },
+             "grep_all_regex": {
+                 "task": "You can of course, use a regex to search multiple files as well. All those 'GSettings' words that you found in the code were actually what are called 'types' in C code. In fact, anything type that starts with a 'G' is usually from a set of frameworks which are called 'GNOME'. These frameworks power everything you see in Endless OS and is what most of our applications are built with. Try doing a recursive search on code/ for everything beginning with the letter 'G' and see what you find!",
+                 "effects": {
+                     "success": {
+                         "reply": "There's so many different things in use here! And we're going to learn about how they all fit together.",
+                         "move_to": "cat_atlas"
+                     },
+                     "failure": {
+                         "reply": "Oh c'mon, there's got to be way more than that!"
+                     }
+                 }
+             },
+             "cat_atlas": {
+                 "task": "And now for something completely different. You can do some nifty processing with tabular data using the 'awk' utility. I've stored a file called 'atlas.txt' in the current directory. Lets have a look at it with 'cat'.",
+                 "effects": {
+                     "success": {
+                         "reply": "There's some interesting information on countries here. But lets see what else we can do with it.",
+                         "move_to": "awk_atlas"
+                     }
+                 }
+             },
+             "awk_atlas": {
+                 "task": "Lets say I only want to know about the countries in that file and nothing else. 'awk' allows you to select columns from tabular data. You'll need to pass an awk-expression to it to let it know what you want to show. For instance, `cat atlas.txt | awk '{print $1}'`",
+                 "effects": {
+                     "success": {
+                         "reply": "Great, just the countries!",
+                         "move_to": "awk_atlas_countries_sorted"
+                     },
+                     "failure": {
+                         "reply": "Hmm, I just wanted to see countries."
+                     }
+                 }
+             },
+             "awk_atlas_countries_sorted": {
+                 "task": "Lets say I wanted to see the same thing, but in sorted order? You can pipe to the 'sort' command sort the output.",
+                 "effects": {
+                     "success": {
+                         "reply": "And that's in sorted order as expected!",
+                         "move_to": "awk_atlas_continents"
+                     },
+                     "failure": {
+                         "reply": "Hmm, I was expecting a sorted order. Can you do that for me?"
+                     }
+                 }
+             },
+             "awk_atlas_continents": {
+                 "task": "Lets just show continents. Do you remember what column they were? Try showing them with 'awk'.",
+                 "effects": {
+                     "success": {
+                         "reply": "Great, just the continents. But there's duplicates!",
+                         "move_to": "awk_atlas_continents_uniq"
+                     },
+                     "failure": {
+                         "reply": "Hmm, I was just expecting continents. Did you print the right column?"
+                     }
+                 }
+             },
+             "awk_atlas_continents_uniq": {
+                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the  `uniq` utility will do that. Why don't you give that a try?",
+                 "effects": {
+                     "success": {
+                         "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
+                         "completes_lesson": true
+                     },
+                     "failure": {
+                         "reply": "Almost there! I just need a view of all the unique continents in that file."
+                     }
+                 }
+             }
+         }
      }
 ]
