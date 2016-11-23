@@ -409,7 +409,7 @@
                  }
              },
              "cat_grep": {
-                 "task": "Sometimes (for big files) you might only want to see lines which have certain words in them. This is pretty common if you're seaching code for things. To filter out all lines which don't contain a particular word, you can use the 'grep' command. Try piping (|) the output of 'cat' on 'sherlock.txt' to grep and search for anything that talks abouut the year 1900 onwards (that means any word starting with 19).",
+                 "task": "Sometimes (for big files) you might only want to see lines which have certain words in them. This is pretty common if you're seaching code for things. To filter out all lines which don't contain a particular word, you can use the 'grep' command. Try piping (|) the output of 'cat' on 'sherlock.txt' to grep and search for anything that talks about the year 1900 onwards (that means any word starting with 19).",
                  "effects": {
                      "success": {
                          "reply": "See how that makes the needles a lot easier to find in the haystack?",
