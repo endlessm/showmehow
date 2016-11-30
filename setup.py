@@ -29,6 +29,7 @@ setup(name="showmehow",
       license="MIT",
       keywords="development",
       packages=find_packages(exclude=["test"]),
+      package_data={'': ["showmehow/lessons.json"]},
       install_requires=["setuptools"],
       entry_points={
           "console_scripts": [
