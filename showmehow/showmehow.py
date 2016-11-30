@@ -379,7 +379,8 @@ def main(argv=None):
 
     arguments = parser.parse_args(argv or sys.argv[1:])
 
-    with open('lessons.json') as lessons_stream:
+    lessons_path = os.path.join(os.path.dirname(__file__), 'lessons.json')
+    with open(lessons_path) as lessons_stream:
         lessons = json.load(lessons_stream)
 
     if os.environ.get("NONINTERACTIVE"):
