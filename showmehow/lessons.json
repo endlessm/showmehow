@@ -654,5 +654,165 @@
                  }
              }
          }
-     }
+     },
+     {
+        "name": "python",
+        "available_to": ["console"],
+        "requires_session": true,
+        "desc": "The basics of Python",
+        "entry": "add_numbers",
+        "practice": {
+            "add_numbers": {
+                "task": "Arithmetic is understood in most programming languages like Python. Try assigning 'a' usign the '=' operator to 4 + 7.",
+                "effects": {
+                    "success": {
+                        "reply": "'a' is now 11!",
+                        "move_to": "print_string"
+                    },
+                    "failure": {
+                        "reply": "I don't see an 'a' variable that has the value of '11'. Remember that you'll need to assign the result wiht the '=' operator to 'a'. For instance 'a = 4 + 7'"
+                    }
+                }
+            },
+            "print_string": {
+                "task": "You can also put a bunch of letters together to make what is called a 'string' and display some text. The 'print' function, called by using print('the contents of some string') can be used to display things in the terminal. Try printing 'Hello, world!'",
+                "effects": {
+                    "success": {
+                        "reply": "Nice! You've just written your very first program!",
+                        "move_to": "string_format"
+                    },
+                    "failure": {
+                        "reply": "You were so close to writing your first program! Lets try showing 'Hello, world!' again using 'print()'."
+                    }
+                }
+            },
+            "string_format": {
+                "task": "You can actually put whatever you want in a string, though some things need to be converted first. You can use the 'format' function to do this. Use something like 'This is a string with a number: {}'.format(7) to show the string 'This is a string with a number: 7'. Each '{}' is replaced with a corresponding 'argument' provided to the 'format' method on string.",
+                "effects": {
+                    "success": {
+                        "reply": "What you just did is called 'string interpolation' and it is a very common pattern in a lot of programs.",
+                        "move_to": "split_string"
+                    },
+                    "failure": {
+                        "reply": "That wasn't the string I was expecting"
+                    }
+                }
+            },
+            "split_string": {
+                "task": "You can also split a string of some data into a list as well. You can do this with the 'split' method on a string and providing a delimiter to split on. Try splitting the string 'Hello world' and assigning the result to 'splitted'",
+                "effects": {
+                    "success": {
+                        "reply": "Great! You now made a list out of that string. You can do some more stuff with lists, which we'll show you later.",
+                        "move_to": "join_string"
+                    },
+                    "failure": {
+                        "reply": "Hmm, that didn't split into the list I was thinking of."
+                    }
+                }
+            },
+            "join_string": {
+                "task": "Like splitting a string, there is also a method to join a list together into a string. This can be done with the join method used on some string as a delimiter. For instance ' '.join(list). Try joining the result of 'splitted' using ' '.",
+                "effects": {
+                    "success": {
+                        "reply": "And now we're back to where we were. You'll find that a lot of functionality in Python is designed to be reversible. After all, programming is all about shuffling data around and we're going to learn more about that soon.",
+                        "completes_lesson": true
+                    },
+                    "failure": {
+                        "reply": "Hmm, we should get the exact same result as when you first split the string, i.e, 'Hello world'"
+                    }
+                }
+            }
+        }
+     },
+     {
+        "name": "python_lists",
+        "available_to": ["console"],
+        "requires_session": true,
+        "desc": "Working with lists in python",
+        "entry": "convert_list",
+        "practice": {
+            "convert_list": {
+                "task": "Python provides some really nifty utilities to convert lists of one thing into lists of another. This is really useful for when you're trying to convert data from one format to another. These utilities are called 'list comprehensions'. You can see more about the syntax of these on https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions. To try it out, I've created a list called 'numbers' and I want you to give me back a list of every number multiplied by 5, assigned to the value 'fives'.",
+                "effects": {
+                    "success": {
+                        "reply": "Success! You've now used your first list comprehension!",
+                        "move_to": "filter_list"
+                    },
+                    "failure": {
+                        "reply": "Nope, I don't see a list around with multiples of five. Did you assign the result to 'fives'?"
+                    }
+                }
+            },
+            "filter_list": {
+                "task": "With list comprehensions you can also filter out things from lists in a single line. Lets try it with the same thing. I want you to filter out every number that is odd. Have a look at the documentation link provided earlier for how to do it. You can use the modulo (%) operator to get the remainder of a division. Remember, that a number divides perfectly if there is no remainder! Assign the result to 'filtered'.",
+                "effects": {
+                    "success": {
+                        "reply": "Now this list only has even numbers!",
+                        "move_to": "dict_comprehension"
+                    },
+                    "failure": {
+                        "reply": "Hmm, I'm expecting a list containing only even numbers at 'filtered'"
+                    }
+                }
+            },
+            "dict_comprehension": {
+                "task": "Comprehensions aren't just limited to lists. You can also build dictionary types using comprehensions too. Dictionary types map keys to values and provide a really convenient way of getting an associated value if you know what a unique identifier for it will be. Lets try combining everything you've learnt. I'm going to put a string containing your system's environment variables in the variable 'environment'. This variable looks like 'VARIABLE=value OTHER_VARIABLE=value'. Split that into a list of strings and then use each item of the list to build up the keys and values for the dictionary. You will probably want to split each string on the '=' sign. Store the result in 'environment_dict'.",
+                "effects": {
+                    "success": {
+                        "reply": "Congratulations! You're mastering data structures in Python now!",
+                        "completes_lesson": true
+                    },
+                    "failure": {
+                        "reply": "Hmm, that wasn't what I was expecting. The end result should be a dictionary that looks like this: { 'VARIABLE': 'value', 'OTHER_VARIABLE', 'other_value' }, stored in 'environment_dict'"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "name": "python_gi",
+        "available_to": ["console"],
+        "requires_session": true,
+        "desc": "Using GObject-Introspection to interact with system libraries",
+        "entry": "create_gi_binding",
+        "practice": {
+            "create_gi_binding": {
+                "name": "On Endless OS there's a powerful framework called GObject-Introspection that allows you to interact with lots of different system components from many different languages. For instance, one of the components is called 'Gio'. 'Gio' can be imported from the namespace 'gi'. Try running 'from gi.repository import Gio'.",
+                "effects": {
+                    "success": {
+                        "reply": "We've now imported the Gio system library. Lets see what's in there.",
+                        "move_to": "instantiate_gi_class"
+                    },
+                    "failure": {
+                        "reply": "Hmm, I don't see the Gio library. Are you sure you imported it correctly?"
+                    }
+
+                }
+            },
+            "instantiate_gi_class": {
+                "name": "Something really simple we can use right now is the 'Notification' object from Gio. This can be used to send a system notification. You can create that class by just by calling Gio.Notification.new('Lets eat lunch!'). Create a new Notification object and assign it to 'notification'!",
+                "effects": {
+                    "success": {
+                        "reply": "Notification created!",
+                        "move_to": "send_gnotification"
+                    },
+                    "failure": {
+                        "reply": "Hmm, I don't see any notification with the name 'notification'"
+                    }
+                }
+            },
+            "send_gnotification": {
+                "name": "Now that we've created out notification object, lets send it! This is done by using the application instance to send the notification. That can be found at the variable named 'application' which I've created for you. Have a look at https://developer.gnome.org/GNotification/ for how to send it and what to call application.send_notification with.",
+                "effects": {
+                    "success": {
+                        "reply": "Notification sent! I'm sure you must have seen it!",
+                        "completes_lesson": true
+                    },
+                    "failure": {
+                        "reply": "Still waiting on that notification to be sent!"
+                    }
+                }
+            }
+        }
+    }
 ]
