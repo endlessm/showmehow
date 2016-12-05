@@ -195,7 +195,7 @@ class PracticeTaskStateMachine(object):
                                 if l["name"] == self._lesson), False)
 
         if requires_session:
-            self._session = self._service.call_open_session_sync(None)
+            self._session = self._service.call_open_session_sync(GLib.Variant("a(s)", [("python", "bash")]))
 
         return self
 
