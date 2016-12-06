@@ -388,5 +388,352 @@
                 }
             }
         }
+     },
+     {
+         "name": "text",
+         "available_to": ["console"],
+         "requires_session": false,
+         "desc": "Process text like a ninja",
+         "entry": "cat",
+         "practice": {
+             "cat": {
+                 "task": "You can use the 'cat' command to read text from files. Why not check out the contents of sherlock.txt in this directory?",
+                 "effects": {
+                     "success": {
+                         "reply": "Great! Now lets see what else we can do with this file.",
+                         "move_to": "cat_grep"
+                     },
+                     "failure": {
+                         "reply": "That doesn't sound anything like sherlock! Get me that file!"
+                     }
+                 }
+             },
+             "cat_grep": {
+                 "task": "Sometimes (for big files) you might only want to see lines which have certain words in them. This is pretty common if you're seaching code for things. To filter out all lines which don't contain a particular word, you can use the 'grep' command. Try piping (|) the output of 'cat' on 'sherlock.txt' to grep and search for anything that talks about the year 1900 onwards (that means any word starting with 19).",
+                 "effects": {
+                     "success": {
+                         "reply": "See how that makes the needles a lot easier to find in the haystack?",
+                         "move_to": "grep_file"
+                     },
+                     "failure": {
+                         "reply": "I just need the lines talking about 1900 onwards. Remember that you can pipe things by using the | operator, for instance, cat 'kittens.txt' | grep cats"
+                     }
+                 }
+             },
+             "grep_file": {
+                 "task": "I lied. You don't actually have to pipe the output of 'cat' to 'grep' to search a file. You can just use 'grep' on the file directly. But I did show you the usefulness of 'streams' in the context of the shell. Why don't you try just using 'grep' directly on 'sherlock.txt' with the same query (everything to do with the 1900s).",
+                 "effects": {
+                     "success": {
+                         "reply": "Same result!",
+                         "move_to": "grep_extended_regex"
+                     },
+                     "failure": {
+                         "reply": "You should get the same result as piping it to cat. Just try `grep <expression> sherlock.txt`."
+                     }
+                 }
+             },
+             "grep_extended_regex": {
+                 "task": "But what if I told you I wanted to know about 1800 and 1900, or really anything to do with a year in that piece of text? You can use extended grep with a regular expression. There's way too much for me to tell you about them right now, but you can go to http://docs.activestate.com/komodo/4.4/regex-intro.html for some basic ones. Why don't you head over there, come back and type in a command using grep -E <regular expression> to find all lines with a 4-digit year?",
+                 "effects": {
+                     "success": {
+                         "reply": "There we go, you searched for two things at once! Bet you couldn't do that in a word processor!",
+                         "move_to": "grep_all"
+                     },
+                     "failure": {
+                         "reply": "Nope, I just need the lines with years in them, but that includes years in the 1800s as well! Have a look http://docs.activestate.com/komodo/4.4/regex-intro.html again and see if you can come up with a regular expression to give to `grep -E`."
+                     }
+                 }
+             },
+             "grep_all": {
+                 "task": "So now you can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it on the code/ directory. I'm looking for code that uses GSettings. You can a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
+                 "effects": {
+                     "success": {
+                         "reply": "Ah! Found them all! Thanks, that will be quite useful later on.",
+                         "move_to": "grep_all_regex"
+                     },
+                     "failure": {
+                         "reply": "Not quite what I was expecting. Sure you searched just for GSettings?"
+                     }
+                 }
+             },
+             "grep_all_regex": {
+                 "task": "You can of course, use a regex to search multiple files as well. All those 'GSettings' words that you found in the code were actually what are called 'types' in C code. In fact, anything type that starts with a 'G' is usually from a set of frameworks which are called 'GNOME'. These frameworks power everything you see in Endless OS and is what most of our applications are built with. Try doing a recursive search on code/ for everything beginning with the letter 'G' and see what you find!",
+                 "effects": {
+                     "success": {
+                         "reply": "There's so many different things in use here! And we're going to learn about how they all fit together.",
+                         "move_to": "cat_atlas"
+                     },
+                     "failure": {
+                         "reply": "Oh c'mon, there's got to be way more than that!"
+                     }
+                 }
+             },
+             "cat_atlas": {
+                 "task": "And now for something completely different. You can do some nifty processing with tabular data using the 'awk' utility. I've stored a file called 'atlas.txt' in the current directory. Lets have a look at it with 'cat'.",
+                 "effects": {
+                     "success": {
+                         "reply": "There's some interesting information on countries here. But lets see what else we can do with it.",
+                         "move_to": "awk_atlas"
+                     }
+                 }
+             },
+             "awk_atlas": {
+                 "task": "Lets say I only want to know about the countries in that file and nothing else. 'awk' allows you to select columns from tabular data. You'll need to pass an awk-expression to it to let it know what you want to show. For instance, `cat atlas.txt | awk '{print $1}'`",
+                 "effects": {
+                     "success": {
+                         "reply": "Great, just the countries!",
+                         "move_to": "awk_atlas_countries_sorted"
+                     },
+                     "failure": {
+                         "reply": "Hmm, I just wanted to see countries."
+                     }
+                 }
+             },
+             "awk_atlas_countries_sorted": {
+                 "task": "Lets say I wanted to see the same thing, but in sorted order? You can pipe to the 'sort' command sort the output.",
+                 "effects": {
+                     "success": {
+                         "reply": "And that's in sorted order as expected!",
+                         "move_to": "awk_atlas_continents"
+                     },
+                     "failure": {
+                         "reply": "Hmm, I was expecting a sorted order. Can you do that for me?"
+                     }
+                 }
+             },
+             "awk_atlas_continents": {
+                 "task": "Lets just show continents. Do you remember what column they were? Try showing them with 'awk'.",
+                 "effects": {
+                     "success": {
+                         "reply": "Great, just the continents. But there's duplicates!",
+                         "move_to": "awk_atlas_continents_uniq"
+                     },
+                     "failure": {
+                         "reply": "Hmm, I was just expecting continents. Did you print the right column?"
+                     }
+                 }
+             },
+             "awk_atlas_continents_uniq": {
+                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the  `uniq` utility will do that. Why don't you give that a try?",
+                 "effects": {
+                     "success": {
+                         "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
+                         "completes_lesson": true
+                     },
+                     "failure": {
+                         "reply": "Almost there! I just need a view of all the unique continents in that file."
+                     }
+                 }
+             }
+         }
+     },
+     {
+         "name": "ps",
+         "available_to": ["console"],
+         "requires_session": false,
+         "desc": "Get a birds eye view of what's running on your system",
+         "entry": "ps",
+         "practice": {
+             "ps": {
+                 "task": "Ever wanted to know what processes are currently running on your computer? You can show a detailed view of everything using the 'ps' command",
+                 "effects": {
+                     "success": {
+                         "reply": "There's some processes, but only a few. I wonder where all the rest are?",
+                         "move_to": "ps_aux"
+                     },
+                     "failure": {
+                         "reply": "I'm looking for something that says what processes are running on your system. Tried 'ps'?"
+                     }
+                 }
+             },
+             "ps_aux": {
+                 "task": "'ps' told you about some of the processes running on your system, but only a few of them. The manual for it says that 'By default, ps selects all processes with the same effective user ID (euid=EUID) as the current user and associated with the same terminal as the invoker.  It displays the process ID (pid=PID), the terminal associated with the process (tname=TTY), the cumulated CPU time in [DD-]hh:mm:ss format (time=TIME), and the executable name (ucmd=CMD).'. That's a lot of mumbo-jumbo! I think what the manual is trying to say there is that the processes running on your system can have children and parents. Different processes can be attached to different output terminals. Some run in the background and some run on the current terminal. 'ps' just displays what's on the current terminal and running as the current user. If you want to see everything, try the 'aux' switch.",
+                 "effects": {
+                     "success": {
+                         "reply": "Okay, lots of processes now, including the ones running by other users!",
+                         "move_to": "ps_aux_grep"
+                     },
+                     "failure": {
+                         "reply": "Hmm. Is that every process on the system?"
+                     }
+                 }
+             },
+             "ps_aux_grep": {
+                 "task": "Okay, now that we have every process running on the system, I wonder if we can find the process that is running me? My name is showmehow-service. Why don't you try connecting ps aux with 'grep' in order to find out some information about my process?",
+                 "effects": {
+                     "success": {
+                         "reply": "Yup, that's me.",
+                         "move_to": "ps_aux_grep_awk"
+                     },
+                     "failure": {
+                         "reply": "I think I know what I look like and I didn't see myself in there. Remember that you can pipe the output of any command to 'grep' to find lines which match a pattern."
+                     }
+                 }
+             },
+             "ps_aux_grep_awk": {
+                 "task": "Now that you've got the line just showing me, see if you can just get my process id. Remember that the output of 'ps' is tabular, so you can use it with 'awk'. Remember that the process id is always in the second column of ps aux.",
+                 "effects": {
+                     "success": {
+                         "reply": "Horray, a process id!",
+                         "move_to": "view_proc_pid"
+                     },
+                     "failure": {
+                         "reply": "Are you sure that's my process id?"
+                     }
+                 }
+             },
+             "view_proc_pid": {
+                 "task": "With my process id, you can view all the different information that Endless OS stores about me. All that information is actually stored in 'fake' files and folders on your system located at /proc/PID, where PID is the process ID of the process. Why don't you try running 'ls' on that directory and seeing what's there.",
+                 "effects": {
+                     "success": {
+                         "reply": "Wow lots of information and I bet you don't even know where to start",
+                         "move_to": "view_proc_cmdline"
+                     },
+                     "failure": {
+                         "reply": "There should be more files and folders than that..."
+                     }
+                 }
+             },
+             "view_proc_cmdline": {
+                 "task": "Perhaps the first place to start is to view how some of these processes were actually launched. You can do that by viewing the 'cmdline' file in /proc/PID. Why not try viewing that file with 'cat'?",
+                 "effects": {
+                     "success": {
+                         "reply": "Ah-ha, so this process wasn't actually launched directly, but it was launched with something else called 'gjs'. Maybe we should find out what that is.",
+                         "completes_lesson": true
+                     },
+                     "failure": {
+                         "reply": "I don't think that was my command line. I was launched with something ... now what was it."
+                     }
+                 }
+             }
+         }
+     },
+     {
+         "name": "ps",
+         "available_to": ["console"],
+         "requires_session": false,
+         "desc": "Get a birds eye view of what's running on your system",
+         "entry": "ps",
+         "practice": {
+             "ps": {
+                 "task": "Ever wanted to know what processes are currently running on your computer? You can show a detailed view of everything using the 'ps' command",
+                 "effects": {
+                     "success": {
+                         "reply": "There's some processes, but only a few. I wonder where all the rest are?",
+                         "move_to": "ps_aux"
+                     },
+                     "failure": {
+                         "reply": "I'm looking for something that says what processes are running on your system. Tried 'ps'?"
+                     }
+                 }
+             },
+             "ps_aux": {
+                 "task": "'ps' told you about some of the processes running on your system, but only a few of them. The manual for it says that 'By default, ps selects all processes with the same effective user ID (euid=EUID) as the current user and associated with the same terminal as the invoker.  It displays the process ID (pid=PID), the terminal associated with the process (tname=TTY), the cumulated CPU time in [DD-]hh:mm:ss format (time=TIME), and the executable name (ucmd=CMD).'. That's a lot of mumbo-jumbo! I think what the manual is trying to say there is that the processes running on your system can have children and parents. Different processes can be attached to different output terminals. Some run in the background and some run on the current terminal. 'ps' just displays what's on the current terminal and running as the current user. If you want to see everything, try the 'aux' switch.",
+                 "effects": {
+                     "success": {
+                         "reply": "Okay, lots of processes now, including the ones running by other users!",
+                         "move_to": "ps_aux_grep"
+                     },
+                     "failure": {
+                         "reply": "Hmm. Is that every process on the system?"
+                     }
+                 }
+             },
+             "ps_aux_grep": {
+                 "task": "Okay, now that we have every process running on the system, I wonder if we can find the process that is running me? My name is showmehow-service. Why don't you try connecting ps aux with 'grep' in order to find out some information about my process?",
+                 "effects": {
+                     "success": {
+                         "reply": "Yup, that's me.",
+                         "move_to": "ps_aux_grep_awk"
+                     },
+                     "failure": {
+                         "reply": "I think I know what I look like and I didn't see myself in there. Remember that you can pipe the output of any command to 'grep' to find lines which match a pattern."
+                     }
+                 }
+             },
+             "ps_aux_grep_awk": {
+                 "task": "Now that you've got the line just showing me, see if you can just get my process id. Remember that the output of 'ps' is tabular, so you can use it with 'awk'. Remember that the process id is always in the second column of ps aux.",
+                 "effects": {
+                     "success": {
+                         "reply": "Horray, a process id!",
+                         "move_to": "view_proc_pid"
+                     },
+                     "failure": {
+                         "reply": "Are you sure that's my process id?"
+                     }
+                 }
+             },
+             "view_proc_pid": {
+                 "task": "With my process id, you can view all the different information that Endless OS stores about me. All that information is actually stored in 'fake' files and folders on your system located at /proc/PID, where PID is the process ID of the process. Why don't you try running 'ls' on that directory and seeing what's there.",
+                 "effects": {
+                     "success": {
+                         "reply": "Wow lots of information and I bet you don't even know where to start",
+                         "move_to": "view_proc_cmdline"
+                     },
+                     "failure": {
+                         "reply": "There should be more files and folders than that..."
+                     }
+                 }
+             },
+             "view_proc_cmdline": {
+                 "task": "Perhaps the first place to start is to view how some of these processes were actually launched. You can do that by viewing the 'cmdline' file in /proc/PID. Why not try viewing that file with 'cat'?",
+                 "effects": {
+                     "success": {
+                         "reply": "Ah-ha, so this process wasn't actually launched directly, but it was launched with something else called 'gjs'. Maybe we should find out what that is.",
+                         "completes_lesson": true
+                     },
+                     "failure": {
+                         "reply": "I don't think that was my command line. I was launched with something ... now what was it."
+                     }
+                 }
+             }
+         }
+     },
+     {
+         "name": "webrequest",
+         "desc": "Download stuff using the terminal",
+         "available_to": ["console"],
+         "entry": "wget_image",
+         "practice": {
+             "wget_image": {
+                 "task": "If you just want to quickly download something and you know the URL, you can use wget to grab it and save the file to the current directory. Why don't you try using wget to download this image from the Endless website: https://endlessm.com/wp-content/uploads/2016/05/ourcomputers_hero-1.jpg",
+                 "effects": {
+                     "success": {
+                         "reply": "Cool. Try checking out the image in your home directory. It should be there now.",
+                         "move_to": "api_pokemon"
+                     }
+                 }
+             },
+             "api_pokemon": {
+                 "task": "Did you know that the internet you see is only half of what is out there? Lots of things that you use on the internet communicate through a structured format called JSON or another one called XML. Like any other thing on the internet, you can ask some of these services questions and get back a semi-structured answer with `curl`. There's even a service out there that can tell you anything about Pokemon, called PokeAPI. Why not try getting some information about Bulbasaur from http://pokeapi.co/api/v2/pokemon/1/.",
+                 "effects": {
+                     "success": {
+                         "reply": "Woooaaaahhh that's a lot of data! We're going to have to do something about that.",
+                         "move_to": "api_pokemon_types"
+                     }
+                 }
+             },
+             "api_pokemon_types": {
+                 "task": "Lets get something a little more managable, like what type Bulbasaur is. The output PokeAPI gave us was JSON formatted, so we can use the 'ramda' tool to do some processing on it. 'ramda' has some great documentation at https://github.com/ramda/ramda/wiki/What-Function-Should-I-Use%3F. Before we process the object with 'ramda', we'll need to make sure we only get the body of the request using 'curl -LSs'. For now, we're working on what is called an 'Object' and we want to select a specific key, that being the 'types' key. To do that, we can use the 'prop' command. Try it: $ curl -LSs http://pokeapi.co/api/v2/pokemon/1/ | ramda 'prop \\types'",
+                 "effects": {
+                     "success": {
+                         "reply": "Poison and Grass as we expected.",
+                         "move_to": "api_pokemon_in_type"
+                     },
+                     "failure": {
+                         "reply": "Hmm, not the types I expected."
+                     }
+                 }
+             },
+             "api_pokemon_in_type": {
+                 "task": "Lets find out more about the poison type. I'd be really useful if we knew about every Pokemon that was of the poison type. To do this, we'll pick the 'poison' key out of the link provided for 'poison'. Try it and see what you get.",
+                 "effects": {
+                     "success": {
+                         "reply": "Yep, that contains the pokemon that I thought. Next time you're on the hunt for poison Pokemon you know which ones you might have missed.",
+                         "completes_lesson": true
+                     }
+                 }
+             }
+         }
      }
 ]
