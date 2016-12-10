@@ -76,7 +76,7 @@ def show_wrapped_response(value):
     # Preserve paragraphs in original text
     paragraphs = value.split("\n\n")
     for paragraph in paragraphs:
-        lines = textwrap.wrap(paragraph)
+        lines = textwrap.wrap(paragraph, width=68)
         for line in lines:
             print("> " + line)
         print(">")
