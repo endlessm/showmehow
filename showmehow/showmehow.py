@@ -9,23 +9,11 @@
 import argparse
 import json
 import os
-import select
 import sys
 import textwrap
-import threading
 import time
 
-try:
-    from Queue import Queue
-except ImportError:
-    from queue import Queue
-
-try:
-    import readline
-except ImportError:
-    pass
-
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 
 import gi
 
@@ -34,11 +22,6 @@ gi.require_version("GLib", "2.0")
 gi.require_version("Gio", "2.0")
 
 from gi.repository import (GLib, Gio, Showmehow)
-
-try:
-    input = raw_input
-except NameError:
-    pass
 
 
 _PAUSECHARS = ".?!:"
