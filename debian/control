@@ -16,6 +16,7 @@ Architecture: all
 Depends: python-gi,
          libshowmehow-service-0,
          gir1.2-showmehow-service-0,
+         showmehow-data (= ${binary:Version}),
          ${misc:Depends},
          ${python:Depends}
 Conflicts: python3-showmehow
@@ -29,9 +30,17 @@ Architecture: all
 Depends: python3-gi,
          libshowmehow-service-0,
          gir1.2-showmehow-service-0,
+         showmehow-data (= ${binary:Version}),
          ${misc:Depends},
          ${python3:Depends}
 Conflicts: python-showmehow
 Description: Show a user how to do something in the terminal.
  Show a user how to do something in the terminal.
 
+
+
+Package: showmehow-data
+Architecture: all
+Depends: ${misc:Depends}
+Description: Common data for showmehow command.
+ Common data for showmehow command.
