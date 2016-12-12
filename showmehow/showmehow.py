@@ -191,11 +191,7 @@ class PracticeTaskStateMachine(object):
         This might involve opening a session with the service if
         the underlying lesson requires it.
         """
-        requires_session = next((l.get("requires_session") for l in self._lessons
-                                if l["name"] == self._lesson), False)
-
-        if requires_session:
-            self._session = self._service.call_open_session_sync(None)
+        self._session = self._service.call_open_session_sync(self._lesson, None)
 
         return self
 
@@ -208,7 +204,7 @@ class PracticeTaskStateMachine(object):
         del value
         del traceback
 
-        if self._session:
+        if self._session != -1:
             self._session = self._service.call_close_session_sync(self._session, None)
 
     def start(self):
@@ -378,7 +374,7 @@ def main(argv=None):
 
         unlocked_tasks = [
             [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
-            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong', 'navigation', 'text', 'ps']
+            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong', 'navigation', 'text', 'ps', 'python', 'python_lists', 'python_gi']
         ]
 
     if arguments.list:
