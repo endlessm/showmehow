@@ -191,7 +191,7 @@ class PracticeTaskStateMachine(object):
         This might involve opening a session with the service if
         the underlying lesson requires it.
         """
-        self._session = self._service.call_open_session_sync(self.lesson, None)
+        self._session = self._service.call_open_session_sync(self._lesson, None)
 
         return self
 
