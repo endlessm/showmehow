@@ -295,7 +295,7 @@ class PracticeTaskStateMachine(object):
             user_input = sys.stdin.readline().rstrip("\n")
 
             # If it is 'quit' or 'exit', exit showmehow
-            if user_input == 'quit' or user_input == 'exit':
+            if user_input in ('quit', 'exit'):
                 self.quit()
                 return
 
