@@ -537,7 +537,7 @@
                      "success": {
                          "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
                          "completes_lesson": true,
-                        "side_effects": [
+                         "side_effects": [
                             {
                                 "type": "event",
                                 "value": "showmehow-textprocessing"
