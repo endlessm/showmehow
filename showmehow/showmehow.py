@@ -211,12 +211,17 @@ class PracticeTaskStateMachine(object):
         """Start the state machine and the underlying main loop."""
         return self._loop.run()
 
+    def quit(self):
+        """Quit the main loop and print message."""
+        print('See you later!')
+        self._loop.quit()
+
     def handle_lessons_changed(self, *args):
         """Handle lessons changing underneath us."""
         del args
 
         print("Lessons changed - aborting")
-        self._loop.quit()
+        self.quit()
 
     def lesson_events_satisfied(self, _, lesson, task):
         """Respond to events happening on lesson."""
@@ -288,8 +293,7 @@ class PracticeTaskStateMachine(object):
 
             # If it is 'quit' or 'exit', exit showmehow
             if user_input == 'quit' or user_input == 'exit':
-                print('See you later!')
-                self._loop.quit()
+                self.quit()
                 return
 
             # Submit this to the service and wait for the result
