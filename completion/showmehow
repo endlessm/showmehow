@@ -1,0 +1,26 @@
+# showmehow tab completion for bash.
+
+_showmehow()
+{
+    local cur prev command_list i
+
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in
+    *)
+        if [ $prev = "showmehow" ]; then
+            command_list=$(showmehow --list)
+        fi
+        ;;
+    esac
+
+    for i in ${command_list[@]}; do
+	if [ -z "${i/$cur*}" ]; then
+	    COMPREPLY=( ${COMPREPLY[@]} $i )
+	fi
+    done
+}
+
+# load completion
+complete -F _showmehow showmehow
