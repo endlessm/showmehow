@@ -620,6 +620,9 @@
                      "success": {
                          "reply": "Cool. Try checking out the image in your home directory. It should be there now.",
                          "move_to": "api_pokemon"
+                     },
+                     "failure": {
+                         "reply": "I don't see that image. Try downloading it again?"
                      }
                  }
              },
@@ -629,6 +632,9 @@
                      "success": {
                          "reply": "Woooaaaahhh that's a lot of data! We're going to have to do something about that.",
                          "move_to": "api_pokemon_types"
+                     },
+                     "failure": {
+                         "reply": "That doesn't look like data about bulbasaur to me. Just pass that URL to curl."
                      }
                  }
              },
