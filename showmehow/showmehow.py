@@ -209,7 +209,10 @@ class PracticeTaskStateMachine(object):
 
     def start(self):
         """Start the state machine and the underlying main loop."""
-        return self._loop.run()
+        try:
+            return self._loop.run()
+        except KeyboardInterrupt:
+            self.quit()
 
     def quit(self):
         """Quit the main loop and print message."""
