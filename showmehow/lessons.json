@@ -22,7 +22,13 @@
                 "effects": {
                     "success": {
                         "reply": "Great! Now that we're done with that, maybe you can run 'showmehow' again to find out what other things you can do in this mysterious place....",
-                        "completes_lesson": true
+                        "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-showmehow"
+                            }
+                        ]
 
                     },
                     "failure": {
@@ -219,7 +225,13 @@
                 "effects": {
                     "success": {
                         "reply": "Sweet, looks like I'll be sticking around!",
-                        "completes_lesson": true
+                        "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-settings"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "I'm not there :( The Terminal's App ID is 'org.gnome.Terminal', so we should add the 'org.gnome.Terminal.desktop' entry to that list in taskbar-pins"
@@ -380,7 +392,13 @@
                 "effects": {
                     "success": {
                         "reply": "Sweet, easy to find now!",
-                        "completes_lesson": true
+                        "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-navigation"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Did you write 'kittens' to that file?"
@@ -518,7 +536,13 @@
                  "effects": {
                      "success": {
                          "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
-                         "completes_lesson": true
+                         "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-textprocessing"
+                            }
+                        ]
                      },
                      "failure": {
                          "reply": "Almost there! I just need a view of all the unique continents in that file."
@@ -599,7 +623,13 @@
                  "effects": {
                      "success": {
                          "reply": "Ah-ha, so this process wasn't actually launched directly, but it was launched with something else called 'gjs'. Maybe we should find out what that is.",
-                         "completes_lesson": true
+                         "completes_lesson": true,
+                         "side_effects": [
+                             {
+                                 "type": "event",
+                                 "value": "showmehow-ps"
+                             }
+                         ]
                      },
                      "failure": {
                          "reply": "I don't think that was my command line. I was launched with something ... now what was it."
@@ -667,7 +697,13 @@
                 "effects": {
                     "success": {
                         "reply": "'a' is now 11!",
-                        "move_to": "print_string"
+                        "move_to": "print_string",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-add-numbers"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "I don't see an 'a' variable that has the value of '11'. Remember that you'll need to assign the result wiht the '=' operator to 'a'. For instance 'a = 4 + 7'"
@@ -679,7 +715,13 @@
                 "effects": {
                     "success": {
                         "reply": "Nice! You've just written your very first program!",
-                        "move_to": "string_format"
+                        "move_to": "string_format",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-print-string"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "You were so close to writing your first program! Lets try showing 'Hello, world!' again using 'print()'."
@@ -691,7 +733,13 @@
                 "effects": {
                     "success": {
                         "reply": "What you just did is called 'string interpolation' and it is a very common pattern in a lot of programs.",
-                        "move_to": "split_string"
+                        "move_to": "split_string",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-string-format"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "That wasn't the string I was expecting"
@@ -703,7 +751,13 @@
                 "effects": {
                     "success": {
                         "reply": "Great! You now made a list out of that string. You can do some more stuff with lists, which we'll show you later.",
-                        "move_to": "join_string"
+                        "move_to": "join_string",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-split-string"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Hmm, that didn't split into the list I was thinking of."
@@ -715,7 +769,13 @@
                 "effects": {
                     "success": {
                         "reply": "And now we're back to where we were. You'll find that a lot of functionality in Python is designed to be reversible. After all, programming is all about shuffling data around and we're going to learn more about that soon.",
-                        "completes_lesson": true
+                        "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-join-string"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Hmm, we should get the exact same result as when you first split the string, i.e, 'Hello world'"
@@ -736,7 +796,13 @@
                 "effects": {
                     "success": {
                         "reply": "Success! You've now used your first list comprehension!",
-                        "move_to": "filter_list"
+                        "move_to": "filter_list",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-convert-list"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Nope, I don't see a list around with multiples of five. Did you assign the result to 'fives'?"
@@ -748,7 +814,13 @@
                 "effects": {
                     "success": {
                         "reply": "Now this list only has even numbers!",
-                        "move_to": "dict_comprehension"
+                        "move_to": "dict_comprehension",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-filter-list"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Hmm, I'm expecting a list containing only even numbers at 'filtered'"
@@ -760,7 +832,13 @@
                 "effects": {
                     "success": {
                         "reply": "Congratulations! You're mastering data structures in Python now!",
-                        "completes_lesson": true
+                        "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-dict-comprehension"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Hmm, that wasn't what I was expecting. The end result should be a dictionary that looks like this: { 'VARIABLE': 'value', 'OTHER_VARIABLE', 'other_value' }, stored in 'environment_dict'"
@@ -781,7 +859,13 @@
                 "effects": {
                     "success": {
                         "reply": "We've now imported the Gio system library. Lets see what's in there.",
-                        "move_to": "instantiate_gi_class"
+                        "move_to": "instantiate_gi_class",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-create-gi-binding"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Hmm, I don't see the Gio library. Are you sure you imported it correctly?"
@@ -794,7 +878,13 @@
                 "effects": {
                     "success": {
                         "reply": "Notification created!",
-                        "move_to": "send_gnotification"
+                        "move_to": "send_gnotification",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-gi-instantiate-gi-class"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Hmm, I don't see any notification with the name 'notification'"
@@ -806,7 +896,13 @@
                 "effects": {
                     "success": {
                         "reply": "Notification sent! I'm sure you must have seen it!",
-                        "completes_lesson": true
+                        "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-gi-send-gnotification"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Still waiting on that notification to be sent!"

@@ -17,11 +17,12 @@ from collections import defaultdict
 
 import gi
 
+gi.require_version("CodingGameService", "1.0")
 gi.require_version("Showmehow", "1.0")
 gi.require_version("GLib", "2.0")
 gi.require_version("Gio", "2.0")
 
-from gi.repository import (GLib, Gio, Showmehow)
+from gi.repository import (CodingGameService, GLib, Gio, Showmehow)
 
 
 _PAUSECHARS = ".?!:"
@@ -145,6 +146,27 @@ def find_task_json(json_file, lesson, task):
     return [l for l in json_file if l["name"] == lesson][0]["practice"][task]
 
 
+def _run_event_side_effect(effect, coding_game_service):
+    """Dispatch an external event for coding-game-service."""
+    try:
+        coding_game_service.call_external_event_sync(effect["value"], None)
+    except GLib.Error as error:
+        # This is an error stating that the service was not interested
+        # in this event right now. In that case, we don't care. Continue.
+        if error.matches("coding-game-service", 2):
+            pass
+
+
+_SIDE_EFFECT_DISPATCH = {
+    "event": _run_event_side_effect
+}
+
+
+def dispatch_side_effect(effect, coding_game_service):
+    """Cause :effect: to be dispatched with :service:."""
+    return _SIDE_EFFECT_DISPATCH[effect["type"]](effect, coding_game_service)
+
+
 class PracticeTaskStateMachine(object):
     """A state machine representing a currently-practiced task.
 
@@ -160,7 +182,7 @@ class PracticeTaskStateMachine(object):
       S -> F, E
     ."""
 
-    def __init__(self, service, lessons, lesson, task):
+    def __init__(self, service, coding_game_service, lessons, lesson, task):
         """Initialise this state machine with the service.
 
         Connect to the relevant signals to handle state transitions.
@@ -168,6 +190,7 @@ class PracticeTaskStateMachine(object):
         super(PracticeTaskStateMachine, self).__init__()
 
         self._service = service
+        self._coding_game_service = coding_game_service
         self._lesson = lesson
         self._lessons = lessons
         self._task = task
@@ -263,6 +286,12 @@ class PracticeTaskStateMachine(object):
         # Print the reply
         show_response_scrolled(result_desc["reply"])
 
+        # Do any side effects now if they are present
+        self._state = "running_side_effects"
+        side_effects = result_desc.get("side_effects", list())
+        for side_effect in side_effects:
+            dispatch_side_effect(side_effect, self._coding_game_service)
+
         if completes_lesson:
             self._loop.quit()
         elif next_task_id == self._task:
@@ -316,6 +345,13 @@ def create_service():
     return service
 
 
+def create_coding_game_service():
+    """Create a CodingGameService Proxy instance."""
+    return CodingGameService.CodingGameServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
+                                                                     0,
+                                                                     "com.endlessm.CodingGameService.Service",
+                                                                     "/com/endlessm/CodingGameService/Service")
+
 def noninteractive_predefined_script(arguments):
     """Script to follow if we are non-interactive.
 
@@ -363,6 +399,7 @@ def main(argv=None):
         return noninteractive_predefined_script(arguments)
     else:
         service = create_service()
+        coding_game_service = create_coding_game_service()
         task_name_desc_pairs = {
             l["name"]: l["desc"]
             for l in lessons
@@ -393,5 +430,5 @@ def main(argv=None):
             show_response_scrolled("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
 
-    with PracticeTaskStateMachine(service, lessons, task, entry) as machine:
+    with PracticeTaskStateMachine(service, coding_game_service, lessons, task, entry) as machine:
         machine.start()
