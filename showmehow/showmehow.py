@@ -286,6 +286,12 @@ class PracticeTaskStateMachine(object):
             # Just get one line from the standard in without the line break
             user_input = sys.stdin.readline().rstrip("\n")
 
+            # If it is 'quit' or 'exit', exit showmehow
+            if user_input == 'quit' or user_input == 'exit':
+                print('See you later!')
+                self._loop.quit()
+                return
+
             # Submit this to the service and wait for the result
             self._state = "submit"
             self._service.call_attempt_lesson_remote(self._session,
