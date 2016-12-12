@@ -342,6 +342,24 @@ def noninteractive_predefined_script(arguments):
         print(success_text)
 
 
+def print_banner():
+    """Print a small banner informing the user how to continue."""
+    print("""[STATUS] Loading""")
+    time.sleep(0.2)
+    print("""[STATUS] Fetching content""")
+    time.sleep(0.4)
+    print("""[STATUS] Transforming system""")
+    time.sleep(0.1)
+    print("""[DONE]\n\n"""
+          """Welcome to 'showmehow'!\n"""
+          """\n""",
+          """We'll show you what's behind the curtains on your system.\n"""
+          """\n"""
+          """To exit at any time, type 'exit' or 'quit' and press 'enter'.\n"""
+          """Have a lot of fun!\n"""
+          """\n\n""")
+
+
 def main(argv=None):
     """Entry point. Parse arguments and start the application."""
     parser = argparse.ArgumentParser('showmehow - Show me how to do things')
@@ -381,6 +399,8 @@ def main(argv=None):
         for t in unlocked_tasks:
             print(t[0])
         sys.exit(0)
+
+    print_banner()
 
     try:
         task, desc, entry = [
