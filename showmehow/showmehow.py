@@ -354,7 +354,9 @@ def main(argv=None):
                         metavar='TASK',
                         help='TASK to perform',
                         type=str)
-
+    parser.add_argument('--list',
+                        help='Display list of known commands',
+                        action='store_true')
     arguments = parser.parse_args(argv or sys.argv[1:])
 
     lessons_path = os.path.join(os.path.dirname(__file__), 'lessons.json')
@@ -378,6 +380,11 @@ def main(argv=None):
             [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
             for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong', 'navigation', 'text', 'ps']
         ]
+
+    if arguments.list:
+        for t in unlocked_tasks:
+            print(t[0])
+        sys.exit(0)
 
     try:
         task, desc, entry = [
