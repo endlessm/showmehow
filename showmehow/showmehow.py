@@ -204,7 +204,7 @@ class PracticeTaskStateMachine(object):
         del value
         del traceback
 
-        if self._session !== -1:
+        if self._session != -1:
             self._session = self._service.call_close_session_sync(self._session, None)
 
     def start(self):
