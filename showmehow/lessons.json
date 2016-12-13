@@ -247,7 +247,7 @@
         "entry": "playsong",
         "practice": {
             "playsong": {
-                "task": "Lets play some music. GStreamer is a framework that can be used to play all sorts of media files on your computer. Rythmbox and VideoNet both use it. To play a music file, just use `gst-launch-1.0`",
+                "task": "Lets play some music. GStreamer is a framework that can be used to play all sorts of media files on your computer. Rythmbox and VideoNet both use it. To play a music file, just use `gst-play-1.0`",
                 "effects": {
                     "success": {
                         "reply": "I love this song! Now you'll probably notice that we're stuck here. To get out of any command line application, you can use Control-C",
