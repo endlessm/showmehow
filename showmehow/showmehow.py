@@ -232,14 +232,22 @@ class PracticeTaskStateMachine(object):
 
     def start(self):
         """Start the state machine and the underlying main loop."""
-        return self._loop.run()
+        try:
+            return self._loop.run()
+        except KeyboardInterrupt:
+            self.quit()
+
+    def quit(self):
+        """Quit the main loop and print message."""
+        print('See you later!')
+        self._loop.quit()
 
     def handle_lessons_changed(self, *args):
         """Handle lessons changing underneath us."""
         del args
 
         print("Lessons changed - aborting")
-        self._loop.quit()
+        self.quit()
 
     def lesson_events_satisfied(self, _, lesson, task):
         """Respond to events happening on lesson."""
@@ -315,6 +323,11 @@ class PracticeTaskStateMachine(object):
             # Just get one line from the standard in without the line break
             user_input = sys.stdin.readline().rstrip("\n")
 
+            # If it is 'quit' or 'exit', exit showmehow
+            if user_input in ('quit', 'exit'):
+                self.quit()
+                return
+
             # Submit this to the service and wait for the result
             self._state = "submit"
             self._service.call_attempt_lesson_remote(self._session,
@@ -378,6 +391,24 @@ def noninteractive_predefined_script(arguments):
         print(success_text)
 
 
+def print_banner():
+    """Print a small banner informing the user how to continue."""
+    print("""[STATUS] Loading""")
+    time.sleep(0.2)
+    print("""[STATUS] Fetching content""")
+    time.sleep(0.4)
+    print("""[STATUS] Transforming system""")
+    time.sleep(0.1)
+    print("""[DONE]\n\n"""
+          """Welcome to 'showmehow'!\n"""
+          """\n""",
+          """We'll show you what's behind the curtains on your system.\n"""
+          """\n"""
+          """To exit at any time, type 'exit' or 'quit' and press 'enter'.\n"""
+          """Have a lot of fun!\n"""
+          """\n\n""")
+
+
 def main(argv=None):
     """Entry point. Parse arguments and start the application."""
     parser = argparse.ArgumentParser('showmehow - Show me how to do things')
@@ -418,6 +449,8 @@ def main(argv=None):
         for t in unlocked_tasks:
             print(t[0])
         sys.exit(0)
+
+    print_banner()
 
     try:
         task, desc, entry = [
