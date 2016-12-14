@@ -861,7 +861,7 @@
         "entry": "create_gi_binding",
         "practice": {
             "create_gi_binding": {
-                "name": "On Endless OS there's a powerful framework called GObject-Introspection that allows you to interact with lots of different system components from many different languages. For instance, one of the components is called 'Gio'. 'Gio' can be imported from the namespace 'gi'. Try running 'from gi.repository import Gio'.",
+                "task": "On Endless OS there's a powerful framework called GObject-Introspection that allows you to interact with lots of different system components from many different languages. For instance, one of the components is called 'Gio'. 'Gio' can be imported from the namespace 'gi'. Try running 'from gi.repository import Gio'.",
                 "effects": {
                     "success": {
                         "reply": "We've now imported the Gio system library. Lets see what's in there.",
@@ -880,7 +880,7 @@
                 }
             },
             "instantiate_gi_class": {
-                "name": "Something really simple we can use right now is the 'Notification' object from Gio. This can be used to send a system notification. You can create that class by just by calling Gio.Notification.new('Lets eat lunch!'). Create a new Notification object and assign it to 'notification'!",
+                "task": "Something really simple we can use right now is the 'Notification' object from Gio. This can be used to send a system notification. You can create that class by just by calling Gio.Notification.new('Lets eat lunch!'). Create a new Notification object and assign it to 'notification'!",
                 "effects": {
                     "success": {
                         "reply": "Notification created!",
@@ -898,7 +898,7 @@
                 }
             },
             "send_gnotification": {
-                "name": "Now that we've created out notification object, lets send it! This is done by using the application instance to send the notification. That can be found at the variable named 'application' which I've created for you. Have a look at https://developer.gnome.org/GNotification/ for how to send it and what to call application.send_notification with.",
+                "task": "Now that we've created out notification object, lets send it! This is done by using the application instance to send the notification. That can be found at the variable named 'application' which I've created for you. Have a look at https://developer.gnome.org/GNotification/ for how to send it and what to call application.send_notification with.",
                 "effects": {
                     "success": {
                         "reply": "Notification sent! I'm sure you must have seen it!",
