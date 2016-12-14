@@ -392,7 +392,23 @@ def noninteractive_predefined_script(arguments):
 
 
 def print_banner():
-    """Print a small banner informing the user how to continue."""
+    """Print a small banner informing the user how to continue.
+
+    However, we don't want to print this banner if we have already run.
+    """
+    first_run_file = os.path.join(GLib.get_user_config_dir(), 'com.endlessm.Showmehow', '.first-run')
+    if not os.path.exists(first_run_file):
+        try:
+            os.makedirs(os.path.dirname(first_run_file))
+        except OSError as error:
+            if error.errno != errno.EEXIST:
+                raise error
+
+        with open(first_run_file, 'w') as fileobj:
+            fileobj.write('')
+    else:
+        return
+
     print("""[STATUS] Loading""")
     time.sleep(0.2)
     print("""[STATUS] Fetching content""")
