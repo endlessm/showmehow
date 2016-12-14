@@ -457,9 +457,10 @@ def main(argv=None):
             for l in lessons
         }
 
+        settings = Gio.Settings.new('com.endlessm.showmehow')
         unlocked_tasks = [
             [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
-            for t in ['showmehow', 'joke', 'readfile', 'breakit', 'changesetting', 'playsong', 'navigation', 'text', 'ps', 'python', 'python_lists', 'python_gi']
+            for t in settings.get_value('unlocked-lessons')
         ]
 
     if arguments.list:
@@ -467,7 +468,9 @@ def main(argv=None):
             print(t[0])
         sys.exit(0)
 
-    print_banner()
+    # Only print the banner when showmehow is actually useful
+    if len(unlocked_tasks) != 0:
+        print_banner()
 
     try:
         task, desc, entry = [
@@ -476,6 +479,8 @@ def main(argv=None):
     except IndexError:
         if arguments.task:
             show_response_scrolled("I don't know how to do task {}".format(arguments.task))
+        elif len(unlocked_tasks) == 0:
+            show_response_scrolled("I can't show you anything right now, sorry.")
         else:
             show_response_scrolled("Hey, how are you? I can tell you about the following tasks:")
         return show_tasks(unlocked_tasks)
