@@ -6,7 +6,8 @@
 # All rights reserved.
 """Installation and setup script for parse-shebang."""
 
-from setuptools import find_packages, setup
+from DistUtilsExtra.auto import setup
+from setuptools import find_packages
 
 setup(name="showmehow",
       version="0.0.0",
