@@ -7,6 +7,7 @@
 """Entry point for showmehow."""
 
 import argparse
+import errno
 import json
 import os
 import sys
