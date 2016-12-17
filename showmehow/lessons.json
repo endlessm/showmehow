@@ -107,7 +107,7 @@
     {
         "name": "breakit",
         "available_to": ["console"],
-        "desc": "See how it is almost impossible to break anything",
+        "desc": "See how it’s almost impossible to break Endless OS.",
         "entry": "breakit",
         "practice": {
             "breakit": {
@@ -264,7 +264,7 @@
         "name": "navigation",
         "available_to": ["console"],
         "requires_session": true,
-        "desc": "Navigate your file system",
+        "desc": "Learn how to navigate the file system.",
         "entry": "change_to_root",
         "practice": {
             "change_to_root": {
@@ -411,7 +411,7 @@
          "name": "text",
          "available_to": ["console"],
          "requires_session": false,
-         "desc": "Process text like a ninja",
+         "desc": "Learn how to process and search through text files.",
          "entry": "cat",
          "practice": {
              "cat": {
