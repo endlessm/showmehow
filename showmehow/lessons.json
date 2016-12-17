@@ -334,7 +334,7 @@
                 }
             },
             "cd": {
-                "task": "To navigate to a different folder, you need to change the 'working directory.' To do that, use the 'cd' command (it stands for 'change directory). Just like before, you type the command followed by the name of the directory: try typing 'cd /home.'",
+                "task": "To navigate to a different folder, you need to change the 'working directory.' To do that, use the 'cd' command (it stands for 'change directory). Just like before, you type the command followed by the name of the directory: try typing 'cd /home'.",
                 "effects": {
                     "success": {
                         "reply": "Great! Now we're in the /home folder.",
