@@ -115,13 +115,7 @@
                 "effects": {
                     "success": {
                         "reply": "No harm done! Want to try again?",
-                        "move_to": "breakit_again",
-                        "side_effects": [
-                            {
-                                "type": "unlock",
-                                "value": ["changesetting", "playsong"]
-                            }
-                        ]
+                        "move_to": "breakit_again"
                     },
                     "failure": {
                         "reply": "Oops! Looks like that's a real command. Are you sure you need me to teach you about Terminal? ;)"
@@ -133,13 +127,7 @@
                 "effects": {
                     "success": {
                         "reply": "See? Harmless. Don't be afraid to try new things. You can either keep typing gibberish or you can enter 'showmehow' to head back to the main menu.",
-                        "completes_lesson": true,
-                        "side_effects": [
-                            {
-                                "type": "unlock",
-                                "value": ["changesetting", "playsong"]
-                            }
-                        ]
+                        "completes_lesson": true
                     },
                     "failure": {
                         "reply": "Oops! Looks like that's a real command. Are you sure you need me to teach you about Terminal? ;)"
