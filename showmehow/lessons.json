@@ -107,7 +107,7 @@
     {
         "name": "breakit",
         "available_to": ["console"],
-        "desc": "See how it’s almost impossible to break Endless OS.",
+        "desc": "See how it's almost impossible to break Endless OS.",
         "entry": "breakit",
         "practice": {
             "breakit": {
