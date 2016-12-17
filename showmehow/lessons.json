@@ -699,7 +699,7 @@
         "entry": "add_numbers",
         "practice": {
             "add_numbers": {
-                "task": "Arithmetic is understood in most programming languages like Python. Try assigning 'a' usign the '=' operator to 4 + 7.",
+                "task": "Arithmetic is understood in most programming languages like Python. Try assigning 'a' using the '=' operator to 4 + 7.",
                 "effects": {
                     "success": {
                         "reply": "'a' is now 11!",
@@ -712,7 +712,7 @@
                         ]
                     },
                     "failure": {
-                        "reply": "I don't see an 'a' variable that has the value of '11'. Remember that you'll need to assign the result wiht the '=' operator to 'a'. For instance 'a = 4 + 7'"
+                        "reply": "I don't see an 'a' variable that has the value of '11'. Remember that you'll need to assign the result with the '=' operator to 'a'. For instance 'a = 4 + 7'"
                     }
                 }
             },
