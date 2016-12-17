@@ -286,7 +286,7 @@
         "entry": "change_to_root",
         "practice": {
             "change_to_root": {
-                "task": "Time to start navigating! How about we start from the top? To move to the 'root directory,' the very highest folder in your system simply type 'cd /'. ",
+                "task": "Time to start navigating! How about we start from the top? To move to the 'root directory', the very highest folder in your system simply type 'cd /'. ",
                 "effects": {
                     "success": {
                         "reply": "Well done! Time to have a look around.",
