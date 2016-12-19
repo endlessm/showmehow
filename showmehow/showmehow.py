@@ -7,9 +7,11 @@
 """Entry point for showmehow."""
 
 import argparse
+import atexit
 import errno
 import json
 import os
+import readline
 import sys
 import textwrap
 import time
@@ -25,6 +27,14 @@ gi.require_version("Gio", "2.0")
 
 from gi.repository import (CodingGameService, GLib, Gio, Showmehow)
 
+# Assign 'input' to raw_input if running on Python 2
+try:
+    input = raw_input
+except NameError:
+    pass
+
+
+readline.parse_and_bind("tab: complete")
 
 _PAUSECHARS = ".?!:"
 
@@ -123,13 +133,13 @@ def display_input_prompt(prompt):
 
 
 def display_input():
-    """Display a prompt to the user depending on the input type."""
-    try:
-        handler = display_input_prompt("$")
-    except KeyError:
-        return
+    """Display a prompt to the user depending on the input type.
 
-    return handler()
+    Because this function calls raw_input, it will block the event loop,
+    which in the current design is fine because we don't need to respond
+    to external events.
+    """
+    return input("$ ")
 
 
 def handle_user_input_text(text, *args):
@@ -206,10 +216,6 @@ class PracticeTaskStateMachine(object):
         self._session = 0
 
         self._service.connect("lessons-changed", self.handle_lessons_changed)
-        GLib.io_add_watch(sys.stdin.fileno(),
-                          GLib.PRIORITY_DEFAULT,
-                          GLib.IO_IN,
-                          self.handle_user_input)
 
         # Display content for the entry point
         self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
@@ -273,7 +279,7 @@ class PracticeTaskStateMachine(object):
 
         show_response_scrolled(task_desc["task"])
         self._state = "waiting"
-        display_input()
+        self.handle_user_input(display_input())
 
     def handle_attempt_lesson_remote(self, source, result):
         """Finish handling the lesson and move to F or E."""
@@ -309,39 +315,29 @@ class PracticeTaskStateMachine(object):
         if completes_lesson:
             self._loop.quit()
         elif next_task_id == self._task:
-            display_input()
             self._state = "waiting"
+            self.handle_user_input(display_input())
         else:
             self._state = "fetching"
             self._task = next_task_id
             self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
 
-    def handle_user_input(self, stdin_fd, events):
-        """Handle user input from stdin.
+    def handle_user_input(self, user_input):
+        """Handle user input from readline."""
 
-        Input could happen at any time, so if it does and we're not ready
-        just return and wait for it to happen again.
-        """
-        if not (events & GLib.IO_IN):
-            return True
+        # If it is 'quit' or 'exit', exit showmehow
+        if user_input in ('quit', 'exit'):
+            self.quit()
+            return
 
-        if self._state == "waiting":
-            # Just get one line from the standard in without the line break
-            user_input = sys.stdin.readline().rstrip("\n")
-
-            # If it is 'quit' or 'exit', exit showmehow
-            if user_input in ('quit', 'exit'):
-                self.quit()
-                return
-
-            # Submit this to the service and wait for the result
-            self._state = "submit"
-            self._service.call_attempt_lesson_remote(self._session,
-                                                     self._lesson,
-                                                     self._task,
-                                                     user_input,
-                                                     None,
-                                                     self.handle_attempt_lesson_remote)
+        # Submit this to the service and wait for the result
+        self._state = "submit"
+        self._service.call_attempt_lesson_remote(self._session,
+                                                 self._lesson,
+                                                 self._task,
+                                                 user_input,
+                                                 None,
+                                                 self.handle_attempt_lesson_remote)
         return True
 
 
