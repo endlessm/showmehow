@@ -4,6 +4,8 @@ Section: python
 Priority: optional
 Build-Depends: python-setuptools (>= 0.6b3),
                python3-setuptools,
+               python-distutils-extra,
+               python3-distutils-extra,
                python-all (>= 2.6.6-3),
                python3-all,
                debhelper (>= 7.4.3)
