@@ -1,1 +1,2 @@
 completion/showmehow usr/share/bash-completion/completions/
+data/com.endlessm.showmehow.gschema.xml usr/share/glib-2.0/schemas

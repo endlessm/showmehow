@@ -1,2 +1,3 @@
+include data/com.endlessm.showmehow.gschema.xml
 include showmehow/lessons.json
 include completion/showmehow
