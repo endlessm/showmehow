@@ -29,6 +29,7 @@ Package: python3-showmehow
 Architecture: all
 Depends: python3-gi,
          libshowmehow-service-0,
+         gir1.2-coding-game-service-0,
          gir1.2-showmehow-service-0,
          showmehow-data (= ${binary:Version}),
          ${misc:Depends},
