@@ -87,8 +87,13 @@ def show_response_scrolled(value):
     """Print scrolled text."""
     print_lines_slowly("\n".join(textwrap.wrap(value)))
 
+def show_raw_response(value):
+    """Print text as-is."""
+    print(value)
+
 
 _RESPONSE_ACTIONS = {
+    "raw": show_raw_response,
     "scrolled": show_response_scrolled,
     "scroll_wait": WaitTextFunctor(),
     "wrapped": show_wrapped_response
