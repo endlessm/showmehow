@@ -107,14 +107,32 @@
     {
         "name": "breakit",
         "available_to": ["console"],
-        "desc": "See how it is almost impossible to break anything",
+        "desc": "See how it's almost impossible to break Endless OS.",
         "entry": "breakit",
         "practice": {
             "breakit": {
-                "task": "It's pretty difficult to break things on the command line. Try typing gibberish.",
+                "task": "It's pretty difficult to break things using Terminal. Don't believe me? Try typing in some gibberish.",
                 "effects": {
                     "success": {
-                        "reply": "See? Harmless. Don't be afraid to try new things!",
+                        "reply": "No harm done! Want to try again?",
+                        "move_to": "breakit_again",
+                        "side_effects": [
+                            {
+                                "type": "unlock",
+                                "value": ["changesetting", "playsong"]
+                            }
+                        ]
+                    },
+                    "failure": {
+                        "reply": "Oops! Looks like that's a real command. Are you sure you need me to teach you about Terminal? ;)"
+                    }
+                }
+            },
+            "breakit_again": {
+                "task": "Gibberish again. Nothing bad will happen, I promise!",
+                "effects": {
+                    "success": {
+                        "reply": "See? Harmless. Don't be afraid to try new things. You can either keep typing gibberish or you can enter 'showmehow' to head back to the main menu.",
                         "completes_lesson": true,
                         "side_effects": [
                             {
@@ -124,7 +142,7 @@
                         ]
                     },
                     "failure": {
-                        "reply": "Oops, you actually ended up running something!"
+                        "reply": "Oops! Looks like that's a real command. Are you sure you need me to teach you about Terminal? ;)"
                     }
                 }
             }
@@ -264,144 +282,103 @@
         "name": "navigation",
         "available_to": ["console"],
         "requires_session": true,
-        "desc": "Navigate your file system",
+        "desc": "Learn how to navigate the file system.",
         "entry": "change_to_root",
         "practice": {
             "change_to_root": {
-                "task": "Lets start at the top and go to the top-down view of Endless. We'll change to the 'root directory', which is the very highest folder in your system. To do that, you just need to type $ cd /",
+                "task": "Time to start navigating! How about we start from the top? To move to the 'root directory,' the very highest folder in your system simply type 'cd /'. ",
                 "effects": {
                     "success": {
-                        "reply": "Time to have a look around.",
+                        "reply": "Well done! Time to have a look around.",
                         "move_to": "list"
                     },
                     "failure": {
-                        "reply": "Are you at the very very very top? It's just four characters! $ cd /"
+                        "reply": "That wasn't quite right. Make sure to enter 'cd /' exactly. That's four characters: the letter 'c', the letter 'd', a space, and then a forward slash."
                     }
                 }
             },
             "list": {
-                "task": "On the command line, you can show all the files and folders in the directory you're currently in, just like in the file manager. To do this, use the 'ls' command. Just type after the $ ls",
+                "task": "Using the command line, you can show all the files and folders in current directory. To do this, use the 'ls' command. ",
                 "effects": {
                     "success": {
-                        "reply": "I bet you've never seen some of these files before. Lets have a look at what they are...",
+                        "reply": "There are your files! Let's keep exploring.",
                         "move_to": "list_child"
                     },
                     "failure": {
-                        "reply": "Hmmm, try listing the files again, I didn't see what I expected to see"
+                        "reply": "That wasn't quite right. Make sure to enter just those two characters 'ls'."
                     }
                 }
             },
             "list_child": {
-                "task": "You can also see what's inside any particular folder. Try listing the contents of /home",
+                "task": "To see the contents of any given folder, use the 'ls' command followed by the folder name. For example, you could enter 'ls /home'.",
                 "effects": {
                     "success": {
-                        "reply": "See anything familiar in there? Every user on the system has their own directory.",
+                        "reply": "Well done!",
                         "move_to": "pwd"
                     },
                     "failure": {
-                        "reply": "Hmmm, are you sure that is /home?"
+                        "reply": "That wasn't quite right. Try entering 'ls /home' again."
                     }
                 }
             },
             "pwd": {
-                "task": "You might wonder what folder you're in right now? You can find out with 'pwd'",
+                "task": "Want to check the folder you're currently in? Use the 'pwd' command.",
                 "effects": {
                     "success": {
-                        "reply": "Wow, that's a short folder name. In fact, you're in what's called the 'root' directory, which is where all the operating system files are stored",
+                        "reply": "Wow, that's a short folder name. Actually, that means you're still in the 'root' directory, which is where all the operating system files are stored.",
                         "move_to": "cd"
                     },
                     "failure": {
-                        "reply": "Hmmm, are you sure that is /home?"
+                        "reply": "Not quite. Type the three-character-command 'pwd' to see the current folder."
                     }
                 }
             },
             "cd": {
-                "task": "You can change the 'working directory' with the 'cd' command. Lets try changing into the 'home' directory. Just like we did before, its 'cd' followed by the name of the directory.",
+                "task": "To navigate to a different folder, you need to change the 'working directory.' To do that, use the 'cd' command (it stands for 'change directory). Just like before, you type the command followed by the name of the directory: try typing 'cd /home.'",
                 "effects": {
                     "success": {
-                        "reply": "Great! The context is now changed and you're in 'home'.",
+                        "reply": "Great! Now we're in the /home folder.",
                         "move_to": "cd_and_cmd"
                     },
                     "failure": {
-                        "reply": "Hmmm, are you sure that is /home?"
+                        "reply": "That wasn't quite right. Try entering 'cd /home' again."
                     }
                 }
             },
             "cd_and_cmd": {
-                "task": "You can change the working directory at any time with the 'cd' command, short for 'change directory'. You can also use '&&' to chain commands together. Try $ cd /home && ls",
+                "task": "You can also use '&&' to chain commands together. For example, to move back to the root directory and then list its contents, you would enter: 'cd / && ls'. Give it a shot!",
                 "effects": {
                     "success": {
-                        "reply": "Just as expected! When you change the working directory with cd you are changing the context in which a command runs, so the 'ls' command listed what was in 'home' directory.",
-                        "move_to": "cd_home_dir"
-                    },
-                    "failure": {
-                        "reply": "Hmmm, are you sure that is /home you listed?"
-                    }
-                }
-            },
-            "cd_home_dir": {
-                "task": "You're probably wondering if there's a quick way to get into your home directory, since that's where you usually start. Turns out there is - the tilde (~, just above the Tab key) is a shortcut that always expands to the path of your home directory. Why don't you try changing to your home directory?",
-                "effects": {
-                    "success": {
-                        "reply": "I'm sure you'll see some familiar stuff in here!",
-                        "move_to": "list_home_dir"
-                    },
-                    "failure": {
-                        "reply": "Hmmm, are sure you changed into your home directory??"
-                    }
-                }
-            },
-            "list_home_dir": {
-                "task": "Now that you're here, why not list the contents of it. Just like before.",
-                "effects": {
-                    "success": {
-                        "reply": "Go check if that's what you expected in the file manager!",
+                        "reply": "Well done. You moved from the /home folder back to the root directory, and then read the root directory's contents.",
                         "move_to": "mkdir"
                     },
                     "failure": {
-                        "reply": "Hmmm, are sure you listed your home directory??"
+                        "reply": "Hm.. try again? Here's the right command: 'cd / && ls'."
                     }
                 }
             },
             "mkdir": {
-                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Why don't you try making a folder called ~/showmehow-code? Remember that the ~ will expand to your home directory! Oh - and also, you might want to provide the '-p' switch to 'mkdir' just in case that folder is already there! So $ mkdir -p (the directory you're going to create)",
+                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Try making a folder called 'showmehow-code' by typing the 'mkdir' command followed by the name of the folder. The ~ will expand to your home directory! Oh - and also, you might want to provide the '-p' switch to 'mkdir' just in case that folder is already there! So $ mkdir -p (the directory you're going to create)",
                 "effects": {
                     "success": {
-                        "reply": "Perhaps it might be worth checking in the file mananger to see if this folder was there!",
+                        "reply": "You did it! If you're unsure, you can go to the file manager to check if the folder is there.",
                         "move_to": "touch"
                     },
                     "failure": {
-                        "reply": "Hmmm, I didn't see the directory. Did you make a folder named 'code' in your home directory?"
+                        "reply": "That wasn't quite right. Here's the right command: 'mkdir ~/showmehow-code'."
                     }
                 }
             },
             "touch": {
-                "task": "Now that we can make a directory, how about we try making a file, in our ~/showmehow-code directory? Try making a file called 'secret.txt' in ~/showmehow-code by using the 'touch' command.",
+                "task": "Now that you've made a folder, let's try making a file in that directory. Using the chain command we learned earlier, see if you can navigate to the ~/showmehow-code folder and create a file called 'secret.txt' in one command.",
                 "effects": {
                     "success": {
-                        "reply": "Lets check that the file was there!",
-                        "move_to": "write_to_secret"
+                        "reply": "Nice work! You're well on your way to mastering navigation of Endless OS through Terminal. If you're ready to try some new tricks, enter 'showmehow' to head back to the main menu.",
+                        "move_to": "write_to_secret",
+                        "completes_lesson": true
                     },
                     "failure": {
-                        "reply": "Hmmm, I didn't see the file. Did you make a file named 'secret.txt' in ~/showmehow-code?"
-                    }
-                }
-            },
-            "write_to_secret": {
-                "task": "Hey! Why don't we do something exciting and write down the academy password in the file we just created? Remember, it was 'kittens'. A quick shortcut to write something to a file is to use the redirect operator '>' after the command, which redirects its output to a file. One common pattern is to use the 'echo' command along with the redirect operator to overwrite a file. For instance, $ echo 'dogs' > cats.txt . Try writing 'kittens' to ~/showmehow-code/secret.txt",
-                "effects": {
-                    "success": {
-                        "reply": "Sweet, easy to find now!",
-                        "completes_lesson": true,
-                        "side_effects": [
-                            {
-                                "type": "event",
-                                "value": "showmehow-navigation"
-                            }
-                        ]
-                    },
-                    "failure": {
-                        "reply": "Did you write 'kittens' to that file?"
+                        "reply": "Nope.. your command should look like this: 'cd ~/showmehow-code && touch secret.txt'."
                     }
                 }
             }
@@ -411,7 +388,7 @@
          "name": "text",
          "available_to": ["console"],
          "requires_session": false,
-         "desc": "Process text like a ninja",
+         "desc": "Learn how to process and search through text files.",
          "entry": "cat",
          "practice": {
              "cat": {
@@ -699,7 +676,7 @@
         "entry": "add_numbers",
         "practice": {
             "add_numbers": {
-                "task": "Arithmetic is understood in most programming languages like Python. Try assigning 'a' usign the '=' operator to 4 + 7.",
+                "task": "Arithmetic is understood in most programming languages like Python. Try assigning 'a' using the '=' operator to 4 + 7.",
                 "effects": {
                     "success": {
                         "reply": "'a' is now 11!",
@@ -712,7 +689,7 @@
                         ]
                     },
                     "failure": {
-                        "reply": "I don't see an 'a' variable that has the value of '11'. Remember that you'll need to assign the result wiht the '=' operator to 'a'. For instance 'a = 4 + 7'"
+                        "reply": "I don't see an 'a' variable that has the value of '11'. Remember that you'll need to assign the result with the '=' operator to 'a'. For instance 'a = 4 + 7'"
                     }
                 }
             },
