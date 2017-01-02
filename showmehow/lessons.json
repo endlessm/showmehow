@@ -362,7 +362,13 @@
                 "effects": {
                     "success": {
                         "reply": "Nice work! If you're ready to try some new tricks, enter 'showmehow' to head back to the main menu.",
-                        "completes_lesson": true
+                        "completes_lesson": true,
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-navigation"
+                            }
+                        ]
                     },
                     "failure": {
                         "reply": "Nope.. your command should look like this: 'cd ~/showmehow-code && touch secret.txt'."
