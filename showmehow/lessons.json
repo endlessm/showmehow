@@ -362,7 +362,6 @@
                 "effects": {
                     "success": {
                         "reply": "Nice work! If you're ready to try some new tricks, enter 'showmehow' to head back to the main menu.",
-                        "move_to": "write_to_secret",
                         "completes_lesson": true
                     },
                     "failure": {
