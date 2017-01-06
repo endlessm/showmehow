@@ -350,7 +350,7 @@ def show_tasks(tasks):
     for task in tasks:
         print("[{task[0]}] - {task[1]}".format(task=task))
 
-    print_lines_slowly("To run any of these lessons, simply enter the command’s name. For example, you could type ‘breakit’ (without the quotation marks) and then hit enter.")
+    print_lines_slowly("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ (without the quotation marks) and then hit enter.")
 
 def create_service():
     """Create a ShowmehowService."""
