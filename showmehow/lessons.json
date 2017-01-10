@@ -353,7 +353,7 @@
                         "move_to": "touch"
                     },
                     "failure": {
-                        "reply": "That wasn't quite right. Here's the right command: 'mkdir ~/showmehow-code'."
+                        "reply": "That wasn't quite right. Here's the right command: 'mkdir -p ~/showmehow-code'."
                     }
                 }
             },
@@ -433,7 +433,7 @@
                  }
              },
              "grep_all": {
-                 "task": "So now you can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it on the code/ directory. I'm looking for code that uses GSettings. You can a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
+                 "task": "So now you can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it in the code/ directory. I'm looking for code that uses GSettings. You can search a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
                  "effects": {
                      "success": {
                          "reply": "Ah! Found them all! Thanks, that will be quite useful later on.",
@@ -445,7 +445,7 @@
                  }
              },
              "grep_all_regex": {
-                 "task": "You can of course, use a regex to search multiple files as well. All those 'GSettings' words that you found in the code were actually what are called 'types' in C code. In fact, anything type that starts with a 'G' is usually from a set of frameworks which are called 'GNOME'. These frameworks power everything you see in Endless OS and is what most of our applications are built with. Try doing a recursive search on code/ for everything beginning with the letter 'G' and see what you find!",
+                 "task": "You can of course, use a regex to search multiple files as well. All those 'GSettings' words that you found in the code were actually what are called 'types' in C code. In fact, anything that starts with a 'G' is usually from a set of frameworks which are called 'GNOME'. These frameworks power everything you see in Endless OS and is what most of our applications are built with. Try doing a recursive search on code/ for everything beginning with the letter 'G' and see what you find!",
                  "effects": {
                      "success": {
                          "reply": "There's so many different things in use here! And we're going to learn about how they all fit together.",
@@ -502,7 +502,7 @@
                  }
              },
              "awk_atlas_continents_uniq": {
-                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the  `uniq` utility will do that. Why don't you give that a try?",
+                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the `uniq` utility will do that. Why don't you give that a try?",
                  "effects": {
                      "success": {
                          "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
@@ -515,7 +515,7 @@
                         ]
                      },
                      "failure": {
-                         "reply": "Almost there! I just need a view of all the unique continents in that file."
+                         "reply": "Almost there! I just need a sorted view of all the unique continents in that file."
                      }
                  }
              }
@@ -541,7 +541,7 @@
                  }
              },
              "ps_aux": {
-                 "task": "'ps' told you about some of the processes running on your system, but only a few of them. The manual for it says that 'By default, ps selects all processes with the same effective user ID (euid=EUID) as the current user and associated with the same terminal as the invoker.  It displays the process ID (pid=PID), the terminal associated with the process (tname=TTY), the cumulated CPU time in [DD-]hh:mm:ss format (time=TIME), and the executable name (ucmd=CMD).'. That's a lot of mumbo-jumbo! I think what the manual is trying to say there is that the processes running on your system can have children and parents. Different processes can be attached to different output terminals. Some run in the background and some run on the current terminal. 'ps' just displays what's on the current terminal and running as the current user. If you want to see everything, try the 'aux' switch.",
+                 "task": "'ps' told you about some of the processes running on your system, but only a few of them. The manual for it says that 'By default, ps selects all processes with the same effective user ID (euid=EUID) as the current user and associated with the same terminal as the invoker.  It displays the process ID (pid=PID), the terminal associated with the process (tname=TTY), the cumulated CPU time in [DD-]hh:mm:ss format (time=TIME), and the executable name (ucmd=CMD).'. That's a lot of mumbo-jumbo! I think what the manual is trying to say there is that the processes running on your system can have children and parents. Different processes can be attached to different output terminals. Some run in the background and some run on the current terminal. 'ps' just displays what's on the current terminal and running as the current user. If you want to see everything, try combining 'ps' with the 'aux' switch.",
                  "effects": {
                      "success": {
                          "reply": "Okay, lots of processes now, including the ones running by other users!",
