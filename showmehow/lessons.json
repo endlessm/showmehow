@@ -515,7 +515,7 @@
                         ]
                      },
                      "failure": {
-                         "reply": "Almost there! I just need a view of all the unique continents in that file."
+                         "reply": "Almost there! I just need a sorted view of all the unique continents in that file."
                      }
                  }
              }
