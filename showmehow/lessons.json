@@ -353,7 +353,7 @@
                         "move_to": "touch"
                     },
                     "failure": {
-                        "reply": "That wasn't quite right. Here's the right command: 'mkdir ~/showmehow-code'."
+                        "reply": "That wasn't quite right. Here's the right command: 'mkdir -p ~/showmehow-code'."
                     }
                 }
             },
