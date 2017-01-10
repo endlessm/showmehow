@@ -433,7 +433,7 @@
                  }
              },
              "grep_all": {
-                 "task": "So now you can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it on the code/ directory. I'm looking for code that uses GSettings. You can a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
+                 "task": "So now you can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it in the code/ directory. I'm looking for code that uses GSettings. You can search a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
                  "effects": {
                      "success": {
                          "reply": "Ah! Found them all! Thanks, that will be quite useful later on.",
@@ -445,7 +445,7 @@
                  }
              },
              "grep_all_regex": {
-                 "task": "You can of course, use a regex to search multiple files as well. All those 'GSettings' words that you found in the code were actually what are called 'types' in C code. In fact, anything type that starts with a 'G' is usually from a set of frameworks which are called 'GNOME'. These frameworks power everything you see in Endless OS and is what most of our applications are built with. Try doing a recursive search on code/ for everything beginning with the letter 'G' and see what you find!",
+                 "task": "You can of course, use a regex to search multiple files as well. All those 'GSettings' words that you found in the code were actually what are called 'types' in C code. In fact, anything that starts with a 'G' is usually from a set of frameworks which are called 'GNOME'. These frameworks power everything you see in Endless OS and is what most of our applications are built with. Try doing a recursive search on code/ for everything beginning with the letter 'G' and see what you find!",
                  "effects": {
                      "success": {
                          "reply": "There's so many different things in use here! And we're going to learn about how they all fit together.",
@@ -502,7 +502,7 @@
                  }
              },
              "awk_atlas_continents_uniq": {
-                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the  `uniq` utility will do that. Why don't you give that a try?",
+                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the `uniq` utility will do that. Why don't you give that a try?",
                  "effects": {
                      "success": {
                          "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
