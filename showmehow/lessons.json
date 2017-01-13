@@ -186,7 +186,7 @@
                         "move_to": "disable_social_bar"
                     },
                     "failure": {
-                        "reply": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-schemas on org.gnome.shell using gsettings and then pipe (|) the output to `sort`?"
+                        "reply": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-keys on org.gnome.shell using gsettings and then pipe (|) the output to `sort`?"
                     }
                 }
             },
