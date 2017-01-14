@@ -9,6 +9,7 @@
 import argparse
 import atexit
 import errno
+import itertools
 import json
 import os
 import readline
@@ -94,8 +95,16 @@ class WaitTextFunctor(object):
 
 
 def show_response_scrolled(value):
-    """Print scrolled text."""
-    print_lines_slowly("\n".join(textwrap.wrap(value)))
+    """Print scrolled text.
+
+    Lines are split into separate paragraphs on \n first before wrapping. This
+    is to enable newlines to be printed correctly without extraneous whitespace
+    on either side.
+    """
+    print_lines_slowly("\n".join(itertools.chain.from_iterable([
+        textwrap.wrap(v)
+        for v in value.splitlines()
+    ])))
 
 def show_raw_response(value):
     """Print text as-is."""
