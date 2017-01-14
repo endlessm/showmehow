@@ -252,7 +252,7 @@ class PracticeTaskStateMachine(object):
     def quit(self):
         """Quit the main loop and print message."""
         print('See you later!')
-        self._loop.quit()
+        sys.exit(0)
 
     def handle_lessons_changed(self, *args):
         """Handle lessons changing underneath us."""
