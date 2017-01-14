@@ -330,6 +330,15 @@ class PracticeTaskStateMachine(object):
             self.quit()
             return
 
+        # If the user types 'showmehow' and the lesson is not 'showmehow'
+        # then exit showmehow as well, but also print its usage. This will
+        # give the impression that we're going back to the top level
+        if user_input.strip() == "showmehow" and self._task != "showmehow":
+            show_response_scrolled("Having fun? You can do the following tasks:")
+            show_tasks(get_unlocked_tasks(load_lessons()))
+            self.quit()
+            return
+
         # Submit this to the service and wait for the result
         self._state = "submit"
         self._service.call_attempt_lesson_remote(self._session,
@@ -428,6 +437,31 @@ def print_banner():
           """\n\n""")
 
 
+def load_lessons():
+    """Load lessons from the specified JSON file."""
+    lessons_path = os.path.join(os.path.dirname(__file__), 'lessons.json')
+    with open(lessons_path) as lessons_stream:
+        return json.load(lessons_stream)
+
+
+def get_unlocked_tasks(lessons):
+    """Get available tasks."""
+    task_name_desc_pairs = {
+        l["name"]: l["desc"]
+        for l in lessons
+    }
+    task_name_entry_pairs = {
+        l["name"]: l["entry"]
+        for l in lessons
+    }
+
+    settings = Gio.Settings.new('com.endlessm.showmehow')
+    return [
+        [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
+        for t in settings.get_value('unlocked-lessons')
+    ]
+
+
 def main(argv=None):
     """Entry point. Parse arguments and start the application."""
     parser = argparse.ArgumentParser('showmehow - Show me how to do things')
@@ -440,30 +474,14 @@ def main(argv=None):
                         help='Display list of known commands',
                         action='store_true')
     arguments = parser.parse_args(argv or sys.argv[1:])
-
-    lessons_path = os.path.join(os.path.dirname(__file__), 'lessons.json')
-    with open(lessons_path) as lessons_stream:
-        lessons = json.load(lessons_stream)
+    lessons = load_lessons()
 
     if os.environ.get("NONINTERACTIVE"):
         return noninteractive_predefined_script(arguments)
     else:
         service = create_service()
         coding_game_service = create_coding_game_service()
-        task_name_desc_pairs = {
-            l["name"]: l["desc"]
-            for l in lessons
-        }
-        task_name_entry_pairs = {
-            l["name"]: l["entry"]
-            for l in lessons
-        }
-
-        settings = Gio.Settings.new('com.endlessm.showmehow')
-        unlocked_tasks = [
-            [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
-            for t in settings.get_value('unlocked-lessons')
-        ]
+        unlocked_tasks = get_unlocked_tasks(lessons)
 
     if arguments.list:
         for t in unlocked_tasks:
