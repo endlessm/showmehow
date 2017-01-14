@@ -462,6 +462,9 @@
                      "success": {
                          "reply": "There's some interesting information on countries here. But lets see what else we can do with it.",
                          "move_to": "awk_atlas"
+                     },
+                     "failure": {
+                         "reply": "Can you show me what 'atlas.txt' looks like first? Remember, its just:\n$ cat atlas.txt"
                      }
                  }
              },
