@@ -8,7 +8,7 @@
                 "task": "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens.",
                 "effects": {
                     "success": {
-                        "reply": "That's right! Though now you need to tell showmehow what task you want to try. This is called an 'argument'. Arguments come after the program name. The program will read them to determine what to do.",
+                        "reply": "That's right! For showmehow to be useful, you will need to tell showmehow what task you want to try. This is called an 'argument'. An 'argument' comes after the program name. The program will read them to determine what to do.",
                         "move_to": "showmehow_argument"
                     },
                     "failure": {
