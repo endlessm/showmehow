@@ -505,7 +505,7 @@
                  }
              },
              "awk_atlas_continents_uniq": {
-                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the `uniq` utility will do that. Why don't you give that a try? Something like:\ncat atlas.txt | awk '{ print $2 }' | sort | uniq",
+                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the `uniq` utility will do that. For 'uniq' to work, you'll need to pick the column, then sort the results, then pipe to uniq, in that order, just like this:\n$ cat atlas.txt | awk '{ print $1 }' | sort | uniq",
                  "effects": {
                      "success": {
                          "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
@@ -518,7 +518,7 @@
                         ]
                      },
                      "failure": {
-                         "reply": "Almost there! I just need a sorted view of all the unique continents in that file. For 'uniq' to work, you'll need to pick the column, then sort the results, then pipe to uniq, just like this:\n$ cat atlas.txt | awk '{ print $1 }' | sort | uniq"
+                         "reply": "Almost there! I just need a sorted view of all the unique continents in that file. Remember, for 'uniq' to work, you'll need to pick the column, then sort the results, then pipe to uniq, just like this:\n$ cat atlas.txt | awk '{ print $1 }' | sort | uniq"
                      }
                  }
              }
