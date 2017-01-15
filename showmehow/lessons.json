@@ -556,7 +556,7 @@
                  }
              },
              "ps_aux_grep": {
-                 "task": "Okay, now that we have every process running on the system, I wonder if we can find the process that is running me? My name is showmehow-service. Why don't you try connecting ps aux with 'grep' in order to find out some information about my process? Remember that you can pipe the output of anything to 'grep' to find lines containing certain words, characters and patterns. Just like:\n$ ps aux | grep <process-name>",
+                 "task": "Okay, now that we have every process running on the system, I wonder if we can find the process that is running me? My name is showmehow-service. Why don't you try connecting 'ps aux' with 'grep' in order to find out some information about my process? Remember that you can pipe the output of anything to 'grep' to find lines containing certain words, characters and patterns. Just like:\n$ ps aux | grep <process-name>",
                  "effects": {
                      "success": {
                          "reply": "Yup, that's me.",
@@ -568,14 +568,14 @@
                  }
              },
              "ps_aux_grep_awk": {
-                 "task": "Now that you've got the line just showing me, see if you can just get my process id. Remember that the output of 'ps' is tabular, so you can use it with 'awk'. Remember that the process id is always in the second column of ps aux. To select columns from tabular data using awk, remember that you can pipe (|) that data to awk and the awk-expression is '{ print $COLUMN }'",
+                 "task": "Now that you've got the line just showing me, see if you can just get my process id. Remember that the output of 'ps' is tabular, so you can use it with 'awk'. Remember that the process id is always in the second column of 'ps aux'. To select columns from tabular data using awk, remember that you can pipe (|) that data to awk and the awk-expression is '{ print $COLUMN }'",
                  "effects": {
                      "success": {
                          "reply": "Horray, a process id!",
                          "move_to": "view_proc_pid"
                      },
                      "failure": {
-                         "reply": "Are you sure that's my process id? Run ps aux, then use grep to select a row containing my process-name (showmehow-service), then select the second column to show my process-id"
+                         "reply": "Are you sure that's my process id? Run 'ps aux', then use grep to select a row containing my process-name (showmehow-service), then select the second column to show my process-id"
                      }
                  }
              },
