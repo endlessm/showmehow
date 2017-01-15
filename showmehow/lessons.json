@@ -167,7 +167,7 @@
                 }
             },
             "list_keys_help": {
-                "task": "Now that you can list scheams, you should learn about the `list-keys` subcommand. You can use the `help` command followed by a sub-command you want help for to see how to use it. For instance:\n$ gsettings help list-keys",
+                "task": "Now that you can list schemas, you should learn about the `list-keys` subcommand. You can use the `help` command followed by a sub-command you want help for to see how to use it. For instance:\n$ gsettings help list-keys",
                 "effects": {
                     "success": {
                         "reply": "Okay, so gsettings [--schemadir SCHEMADIR] list-keys SCHEMA[:PATH] is how you do it",
