@@ -274,7 +274,7 @@
         "entry": "change_to_root",
         "practice": {
             "change_to_root": {
-                "task": "You're well on your way to mastering navigation of Endless OS through Terminal! How about we start from the top? To move to the 'root directory', the very highest folder in your system simply type 'cd /'. ",
+                "task": "You're well on your way to mastering navigation of Endless OS through Terminal! How about we start from the top? To move to the 'root folder', the very highest folder in your system simply type 'cd /'. ",
                 "effects": {
                     "success": {
                         "reply": "Well done! Time to have a look around.",
@@ -286,7 +286,7 @@
                 }
             },
             "list": {
-                "task": "Using the command line, you can show all the files and folders in current directory. To do this, use the 'ls' command. ",
+                "task": "Using the command line, you can show all the files and folders in current folder. To do this, use the 'ls' command. ",
                 "effects": {
                     "success": {
                         "reply": "There are your files! Let's keep exploring.",
@@ -313,7 +313,7 @@
                 "task": "Want to check the folder you're currently in? Use the 'pwd' command.",
                 "effects": {
                     "success": {
-                        "reply": "Wow, that's a short folder name. Actually, that means you're still in the 'root' directory, which is where all the operating system files are stored.",
+                        "reply": "Wow, that's a short folder name. Actually, that means you're still in the 'root' folder, which is where all the operating system files are stored.",
                         "move_to": "cd"
                     },
                     "failure": {
@@ -322,7 +322,7 @@
                 }
             },
             "cd": {
-                "task": "To navigate to a different folder, you need to change the 'working directory'. To do that, use the 'cd' command (it stands for 'change directory'). Just like before, you type the command followed by the name of the directory: try typing 'cd /home'.",
+                "task": "To navigate to a different folder, you need to change the 'working folder'. To do that, use the 'cd' command (it stands for 'change folder'). Just like before, you type the command followed by the name of the folder: try typing 'cd /home'.",
                 "effects": {
                     "success": {
                         "reply": "Great! Now we're in the /home folder.",
@@ -334,10 +334,10 @@
                 }
             },
             "cd_and_cmd": {
-                "task": "You can also use '&&' to chain commands together. For example, to move back to the root directory and then list its contents, you would enter: 'cd / && ls'. Give it a shot!",
+                "task": "You can also use '&&' to chain commands together. For example, to move back to the root folder and then list its contents, you would enter: 'cd / && ls'. Give it a shot!",
                 "effects": {
                     "success": {
-                        "reply": "Well done. You moved from the /home folder back to the root directory, and then read the root directory's contents.",
+                        "reply": "Well done. You moved from the /home folder back to the root folder, and then read the root folder's contents.",
                         "move_to": "mkdir"
                     },
                     "failure": {
@@ -346,7 +346,7 @@
                 }
             },
             "mkdir": {
-                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Try making a folder called 'showmehow-code' by typing the 'mkdir' command followed by the name of the folder. The ~ will expand to your home directory! Oh - and also, you might want to provide the '-p' switch to 'mkdir' just in case that folder is already there! So $ mkdir -p (the directory you're going to create). To summarize:\n$ mkdir -p ~/showmehow-code",
+                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Try making a folder called 'showmehow-code' by typing the 'mkdir' command followed by the name of the folder. The ~ will expand to your home folder! Oh - and also, you might want to provide the '-p' switch to 'mkdir' just in case that folder is already there! So $ mkdir -p (the folder you're going to create). To summarize:\n$ mkdir -p ~/showmehow-code",
                 "effects": {
                     "success": {
                         "reply": "You did it! If you're unsure, you can go to the file manager to check if the folder is there.",
@@ -358,7 +358,7 @@
                 }
             },
             "touch": {
-                "task": "Now that you've made a folder, let's try making a file in that directory. You can create an empty file by using 'touch' followed by the name of the file. For example:\n$ touch secret.txt\nUsing the '&&' command chaining we learned earlier, see if you can navigate to the ~/showmehow-code folder and create a file called 'secret.txt' in one command.",
+                "task": "Now that you've made a folder, let's try making a file in that folder. You can create an empty file by using 'touch' followed by the name of the file. For example:\n$ touch secret.txt\nUsing the '&&' command chaining we learned earlier, see if you can navigate to the ~/showmehow-code folder and create a file called 'secret.txt' in one command.",
                 "effects": {
                     "success": {
                         "reply": "Nice work! If you're ready to try some new tricks, enter 'showmehow' to head back to the main menu.",
@@ -385,7 +385,7 @@
          "entry": "cat",
          "practice": {
              "cat": {
-                 "task": "You can use the 'cat' command to read text from files. Why not check out the contents of sherlock.txt in this directory using:\n$ cat sherlock.txt",
+                 "task": "You can use the 'cat' command to read text from files. Why not check out the contents of sherlock.txt in this folder using:\n$ cat sherlock.txt",
                  "effects": {
                      "success": {
                          "reply": "Great! Now lets see what else we can do with this file.",
@@ -433,7 +433,7 @@
                  }
              },
              "grep_all": {
-                 "task": "You can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it in the code/ directory. As an example, lets look for code that uses GSettings. You can search a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
+                 "task": "You can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it in the code/ folder. As an example, lets look for code that uses GSettings. You can search a folder by providing the `-R` option to grep. For instance, grep -R <expression> <folder>. Can you find me all the lines that use GSettings?",
                  "effects": {
                      "success": {
                          "reply": "Ah! Found them all! Thanks, that will be quite useful later on.",
@@ -457,7 +457,7 @@
                  }
              },
              "cat_atlas": {
-                 "task": "And now for something completely different - you can do some nifty processing with tabular data using the 'awk' utility. I've stored a file called 'atlas.txt' in the current directory. Lets have a look at it with 'cat'. Remember, to read a file, its just:\n$ cat atlas.txt",
+                 "task": "And now for something completely different - you can do some nifty processing with tabular data using the 'awk' utility. I've stored a file called 'atlas.txt' in the current folder. Lets have a look at it with 'cat'. Remember, to read a file, its just:\n$ cat atlas.txt",
                  "effects": {
                      "success": {
                          "reply": "There's some interesting information on countries here. But lets see what else we can do with it.",
@@ -580,7 +580,7 @@
                  }
              },
              "view_proc_pid": {
-                 "task": "With my process id, you can view all the different information that Endless OS stores about me. All that information is actually stored in 'fake' files and folders on your system located at /proc/PID, where PID is the process ID of the process. Why don't you try running 'ls' on that directory and seeing what's there.",
+                 "task": "With my process id, you can view all the different information that Endless OS stores about me. All that information is actually stored in 'fake' files and folders on your system located at /proc/PID, where PID is the process ID of the process. Why don't you try running 'ls' on that folder and seeing what's there.",
                  "effects": {
                      "success": {
                          "reply": "Wow lots of information and I bet you don't even know where to start",
@@ -618,10 +618,10 @@
          "entry": "wget_image",
          "practice": {
              "wget_image": {
-                 "task": "If you just want to quickly download something and you know the URL, you can use wget to grab it and save the file to the current directory. Why don't you try using wget to download this image from the Endless website: https://endlessm.com/wp-content/uploads/2016/05/ourcomputers_hero-1.jpg",
+                 "task": "If you just want to quickly download something and you know the URL, you can use wget to grab it and save the file to the current folder. Why don't you try using wget to download this image from the Endless website: https://endlessm.com/wp-content/uploads/2016/05/ourcomputers_hero-1.jpg",
                  "effects": {
                      "success": {
-                         "reply": "Cool. Try checking out the image in your home directory. It should be there now.",
+                         "reply": "Cool. Try checking out the image in your home folder. It should be there now.",
                          "move_to": "api_pokemon"
                      },
                      "failure": {
