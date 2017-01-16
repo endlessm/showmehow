@@ -186,7 +186,7 @@
                         "move_to": "disable_social_bar"
                     },
                     "failure": {
-                        "reply": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-schemas on org.gnome.shell using gsettings and then pipe (|) the output to `sort`?"
+                        "reply": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-keys on org.gnome.shell using gsettings and then pipe (|) the output to `sort`?"
                     }
                 }
             },
@@ -194,7 +194,7 @@
                 "task": "Lets disable the social bar! The social bar's setting is enable-social-bar and it is a `boolean` setting, meaning it is either 'true' or 'false'. I checked `gsettings help set` for you and it said you can use the `set` command to change a setting with gsettings [--schemadir SCHEMADIR] set SCHEMA[:PATH] KEY VALUE",
                 "effects": {
                     "success": {
-                        "reply": "There we go! No facebook icon!",
+                        "reply": "There we go! No Facebook icon!",
                         "move_to": "enable_social_bar"
                     },
                     "failure": {
@@ -206,11 +206,11 @@
                 "task": "Now lets change it back to true",
                 "effects": {
                     "success": {
-                        "reply": "Okay, phew, facebook is back",
+                        "reply": "Okay, phew, Facebook is back",
                         "move_to": "add_terminal_pinned_help"
                     },
                     "failure": {
-                        "reply": "Quick! I need facebook to come back! Change enable-social-bar on org.gnome.shell back to 'true'!"
+                        "reply": "Quick! I need Facebook to come back! Change enable-social-bar on org.gnome.shell back to 'true'!"
                     }
                 }
             },
