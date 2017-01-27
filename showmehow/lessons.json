@@ -8,7 +8,7 @@
                 "task": "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens.",
                 "effects": {
                     "success": {
-                        "reply": "That's right! Though now you need to tell showmehow what task you want to try. This is called an 'argument'. Try giving showmehow an argument so that it knows what to do. Want to know what argument to give it? There's only one, and it just told you what it was.",
+                        "reply": "That's right! For showmehow to be useful, you will need to tell showmehow what task you want to try. This is called an 'argument'. An 'argument' comes after the program name. The program will read them to determine what to do.",
                         "move_to": "showmehow_argument"
                     },
                     "failure": {
@@ -17,11 +17,11 @@
                 }
             },
             "showmehow_argument": {
-                "task": "Lets try giving an argument to 'showmehow'. Arguments are words that come after the main command",
+                "task": "Try this: 'showmehow showmehow'.",
                 "input": "console",
                 "effects": {
                     "success": {
-                        "reply": "Great! Now that we're done with that, maybe you can run 'showmehow' again to find out what other things you can do in this mysterious place....",
+                        "reply": "Great! Now that we're done with that, maybe you can run 'showmehow' again to find out what other things you can do here.",
                         "completes_lesson": true,
                         "side_effects": [
                             {
@@ -32,7 +32,7 @@
 
                     },
                     "failure": {
-                        "reply": "Hmmm. I want to know what happens when you ask how to use 'showmehow'"
+                        "reply": "Hmmm. I want to know what happens when you ask how to use 'showmehow'. Try this exactly: 'showmehow showmehow'"
                     }
                 }
             }
@@ -45,7 +45,7 @@
         "entry": "fortune",
         "practice": {
             "fortune": {
-                "task": "'fortune' is a command that can tell you a joke",
+                "task": "'fortune' is a command that can tell you lots of things, including funny jokes.",
                 "effects": {
                     "success": {
                         "reply": "Ha-ha. Okay, lets try something even funnier.",
@@ -60,11 +60,11 @@
                 "task": "In the shell, you can pipe (|) the output of commands around into other processes. One of these processes is 'cowsay'. See what happens when you try:\n    $ fortune | cowsay",
                 "effects": {
                     "success": {
-                        "reply": "Moo! Try some more jokes in the shell!",
+                        "reply": "Moo! Try some more jokes in the shell! You can keep running \n$ fortune | cowsay\nto get a different joke every time.",
                         "completes_lesson": true
                     },
                     "failure": {
-                        "reply": "Hmm, I thought a cow was going to say that"
+                        "reply": "Hmm, I thought a cow was going to say that. Pipe 'fortune' to 'cowsay' by using:\n$ fortune | cowsay"
                     }
                 }
             }
@@ -77,28 +77,28 @@
         "entry": "cat",
         "practice": {
             "cat": {
-                "task": "'cat' can be used to read files on your computer. Meow! Lets read the file on your computer which says what operating system we're running. That file is found at /etc/os-release",
+                "task": "You can read any text file stored on your computer in Terminal. The quickest way to do this is with the 'cat' command. 'cat' is short for con-CAT-enate, which adds the text in the file to the Terminal's output. An easy way to remember this is that the curious cat can read your files! Try running:\n$ cat /etc/os-release",
                 "input": "console",
                 "effects": {
                     "success":{
-                        "reply": "Endless OS, as expected. Meow!",
+                        "reply": "Notice anything familiar? This text file, stored in the /etc folder on your computer, says what operating system and what version you are using.",
                         "move_to": "cat_cowsay"
                     },
                     "failure": {
-                        "reply": "Hmm, are you sure you're reading /etc/os-release?"
+                        "reply": "Hmm, are you sure you're reading /etc/os-release? Try running:\n$ cat /etc/os-release"
                     }
                 }
             },
             "cat_cowsay": {
-                "task": "And for good measure, lets get a cow to say it too.",
+                "task": "Anything that adds text to the Terminal (or in other words, 'prints' it, can be piped to another process). For good measure, lets pipe 'cat /etc/os-release' to 'cowsay' with:\n$ cat /etc/os-release | cowsay",
                 "input": "console",
                 "effects": {
                     "success": {
-                        "reply": "Moo! You can read any file that is plain text using `cat`. Try it with files like /etc/resolv.conf",
+                        "reply": "Moo! You can read any file that is plain text using `cat`. Try it with files like /etc/resolv.conf. Anything that you can read can also be piped, so try piping to 'cowsay' too.",
                         "completes_lesson": true
                     },
                     "failure": {
-                        "reply": "Did you get a cow to say what's in /etc/os-release? Try again"
+                        "reply": "Did you get a cow to say what's in /etc/os-release? Try using:\n$ cat /etc/os-release | cowsay"
                     }
                 }
             }
@@ -143,7 +143,7 @@
         "entry": "gsettings",
         "practice": {
             "gsettings": {
-                "task": "Settings for your computer can be controlled with the `gsettings` tool. Lets find out what you can do with `gsettings`.",
+                "task": "Settings for your computer can be controlled with the `gsettings` tool. Lets find out what you can do with `gsettings` by just running:\n$ gsettings.",
                 "effects": {
                     "success": {
                         "reply": "The `gsettings` tool just told you about a bunch of `commands`. You can access these commands by providing the command name as an argument to `gsettings`.",
@@ -155,50 +155,50 @@
                 }
             },
             "list_schemas": {
-                "task": "Lets try listing all the categories, called `schemas` on your system.",
+                "task": "Lets try listing all the categories, called `schemas` on your system. Remember that commands can be told what to do with arguments.",
                 "effects": {
                     "success": {
                         "reply": "Those are all the categories. Now lets look at settings you can tweak in your shell.",
                         "move_to": "list_keys_help"
                     },
                     "failure": {
-                        "reply": "Where are my settings categories? Try running the list-schemas subcommand for gsettings"
+                        "reply": "Where are my settings categories? Try running the list-schemas subcommand for gsettings with:\n$ gsettings list-schemas"
                     }
                 }
             },
             "list_keys_help": {
-                "task": "Lets see how to use the `list-keys` subcommand. You can use the `help` command followed by a sub-command you want help for to see how to use it",
+                "task": "Now that you can list schemas, you should learn about the `list-keys` subcommand. You can use the `help` command followed by a sub-command you want help for to see how to use it. For instance:\n$ gsettings help list-keys",
                 "effects": {
                     "success": {
                         "reply": "Okay, so gsettings [--schemadir SCHEMADIR] list-keys SCHEMA[:PATH] is how you do it",
                         "move_to": "list_settings"
                     },
                     "failure": {
-                        "reply": "I don't know how to use this list-keys option! Get me some help for it!"
+                        "reply": "I don't know how to use this list-keys option! Get me some help for it!\n$ gsettings help list-keys"
                     }
                 }
             },
             "list_settings": {
-                "task": "Now that we know how to use list-keys, lets list all the settings available on the org.gnome.shell category, or 'schema', as it is called. Pipe it to `sort` to get them in alphabetical order",
+                "task": "Now that we know how to use list-keys, lets list all the settings available on the org.gnome.shell category, or 'schema', as it is called. Pipe it to `sort` to get them in alphabetical order.",
                 "effects": {
                     "success": {
                         "reply": "Interesting.... I wonder what we can play around with here...",
                         "move_to": "disable_social_bar"
                     },
                     "failure": {
-                        "reply": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-keys on org.gnome.shell using gsettings and then pipe (|) the output to `sort`?"
+                        "reply": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-keys on org.gnome.shell using gsettings and then pipe (|) the output to `sort`? Try:\n$ gsettings list-keys org.gnome.shell | sort"
                     }
                 }
             },
             "disable_social_bar": {
-                "task": "Lets disable the social bar! The social bar's setting is enable-social-bar and it is a `boolean` setting, meaning it is either 'true' or 'false'. I checked `gsettings help set` for you and it said you can use the `set` command to change a setting with gsettings [--schemadir SCHEMADIR] set SCHEMA[:PATH] KEY VALUE",
+                "task": "Lets disable the social bar! The social bar's setting is 'enable-social-bar' and it is a `boolean` setting, meaning it is either 'true' or 'false'. I checked `gsettings help set` for you and it said you can use the `set` command to change a setting with gsettings [--schemadir SCHEMADIR] set SCHEMA[:PATH] KEY VALUE. Your job is to provide KEY and VALUE, those being 'enable-social-bar' and 'false' to `gsettings set`.",
                 "effects": {
                     "success": {
                         "reply": "There we go! No Facebook icon!",
                         "move_to": "enable_social_bar"
                     },
                     "failure": {
-                        "reply": "Hmm, I thought you'd change the value of org.gnome.shell enable-social-bar to false, but it is still true"
+                        "reply": "Hmm, I thought you'd change the value of org.gnome.shell e'enable-social-bar' to false, but it is still true. Remember to change a gsettings value you can use:\n$ gsettings set KEY VALUE"
                     }
                 }
             },
@@ -210,19 +210,19 @@
                         "move_to": "add_terminal_pinned_help"
                     },
                     "failure": {
-                        "reply": "Quick! I need Facebook to come back! Change enable-social-bar on org.gnome.shell back to 'true'!"
+                        "reply": "Quick! I need Facebook to come back! Change 'enable-social-bar' on org.gnome.shell back to 'true'!"
                     }
                 }
             },
             "add_terminal_pinned_help": {
-                "task": "Oh I know, we should add the Terminal to your pinned apps! To do that, we can add it to the list inside of the taskbar-pins setting. But first lets see what the taskbar-pins setting looks like.",
+                "task": "Oh I know, we should add the Terminal to your pinned apps! To do that, we can add it to the list inside of the taskbar-pins setting. But first lets see what the taskbar-pins setting looks like. You might want to get its value, by using something like:\n$ gsettings get org.gnome.shell taskbar-pins",
                 "effects": {
                     "success": {
                         "reply": "Okay, so it is a list in square brackets, where every element is surrounded by quotation marks and separated by a comma. Just like this: ['chromium-browser.desktop', 'my-other-app.desktop']",
                         "move_to": "add_terminal_pinned"
                     },
                     "failure": {
-                        "reply": "You didn't show me your pinned apps!"
+                        "reply": "You didn't show me your pinned apps! You can get your pinned apps with:\n$ gsettings get org.gnome.shell taskbar-pins"
                     }
                 }
             },
@@ -253,7 +253,7 @@
         "entry": "playsong",
         "practice": {
             "playsong": {
-                "task": "Lets play some music. GStreamer is a framework that can be used to play all sorts of media files on your computer. Rythmbox and VideoNet both use it. To play a music file, just use `gst-play-1.0`",
+                "task": "Lets play some music. GStreamer is a framework that can be used to play all sorts of media files on your computer. Rythmbox and VideoNet both use it. To play a music file, just use `gst-play-1.0`. 'gst' here refers to 'GStreamer'. Some apps have a numbered suffix when two versions might be installed on the same system.",
                 "effects": {
                     "success": {
                         "reply": "I love this song! Now you'll probably notice that we're stuck here. To get out of any command line application, you can use Control-C",
@@ -274,7 +274,7 @@
         "entry": "change_to_root",
         "practice": {
             "change_to_root": {
-                "task": "You're well on your way to mastering navigation of Endless OS through Terminal! How about we start from the top? To move to the 'root directory', the very highest folder in your system simply type 'cd /'. ",
+                "task": "You're well on your way to mastering navigation of Endless OS through Terminal! How about we start from the top? To move to the 'root folder', the very highest folder in your system simply type 'cd /'. ",
                 "effects": {
                     "success": {
                         "reply": "Well done! Time to have a look around.",
@@ -286,7 +286,7 @@
                 }
             },
             "list": {
-                "task": "Using the command line, you can show all the files and folders in current directory. To do this, use the 'ls' command. ",
+                "task": "Using the command line, you can show all the files and folders in current folder. To do this, use the 'ls' command. ",
                 "effects": {
                     "success": {
                         "reply": "There are your files! Let's keep exploring.",
@@ -313,7 +313,7 @@
                 "task": "Want to check the folder you're currently in? Use the 'pwd' command.",
                 "effects": {
                     "success": {
-                        "reply": "Wow, that's a short folder name. Actually, that means you're still in the 'root' directory, which is where all the operating system files are stored.",
+                        "reply": "Wow, that's a short folder name. Actually, that means you're still in the 'root' folder, which is where all the operating system files are stored.",
                         "move_to": "cd"
                     },
                     "failure": {
@@ -322,7 +322,7 @@
                 }
             },
             "cd": {
-                "task": "To navigate to a different folder, you need to change the 'working directory'. To do that, use the 'cd' command (it stands for 'change directory'). Just like before, you type the command followed by the name of the directory: try typing 'cd /home'.",
+                "task": "To navigate to a different folder, you need to change the 'working folder'. To do that, use the 'cd' command (it stands for 'change folder'). Just like before, you type the command followed by the name of the folder: try typing 'cd /home'.",
                 "effects": {
                     "success": {
                         "reply": "Great! Now we're in the /home folder.",
@@ -334,10 +334,10 @@
                 }
             },
             "cd_and_cmd": {
-                "task": "You can also use '&&' to chain commands together. For example, to move back to the root directory and then list its contents, you would enter: 'cd / && ls'. Give it a shot!",
+                "task": "You can also use '&&' to chain commands together. For example, to move back to the root folder and then list its contents, you would enter: 'cd / && ls'. Give it a shot!",
                 "effects": {
                     "success": {
-                        "reply": "Well done. You moved from the /home folder back to the root directory, and then read the root directory's contents.",
+                        "reply": "Well done. You moved from the /home folder back to the root folder, and then read the root folder's contents.",
                         "move_to": "mkdir"
                     },
                     "failure": {
@@ -346,7 +346,7 @@
                 }
             },
             "mkdir": {
-                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Try making a folder called 'showmehow-code' by typing the 'mkdir' command followed by the name of the folder. The ~ will expand to your home directory! Oh - and also, you might want to provide the '-p' switch to 'mkdir' just in case that folder is already there! So $ mkdir -p (the directory you're going to create).",
+                "task": "Now that you're getting pretty good at navigating around, what about making some new files and directories? The 'mkdir' command can be used to make a new folder. Try making a folder called 'showmehow-code' by typing the 'mkdir' command followed by the name of the folder. The ~ will expand to your home folder! Oh - and also, you might want to provide the '-p' switch to 'mkdir' just in case that folder is already there! So $ mkdir -p (the folder you're going to create). To summarize:\n$ mkdir -p ~/showmehow-code",
                 "effects": {
                     "success": {
                         "reply": "You did it! If you're unsure, you can go to the file manager to check if the folder is there.",
@@ -358,7 +358,7 @@
                 }
             },
             "touch": {
-                "task": "Now that you've made a folder, let's try making a file in that directory. Using the chain command we learned earlier, see if you can navigate to the ~/showmehow-code folder and create a file called 'secret.txt' in one command.",
+                "task": "Now that you've made a folder, let's try making a file in that folder. You can create an empty file by using 'touch' followed by the name of the file. For example:\n$ touch secret.txt\nUsing the '&&' command chaining we learned earlier, see if you can navigate to the ~/showmehow-code folder and create a file called 'secret.txt' in one command.",
                 "effects": {
                     "success": {
                         "reply": "Nice work! If you're ready to try some new tricks, enter 'showmehow' to head back to the main menu.",
@@ -385,7 +385,7 @@
          "entry": "cat",
          "practice": {
              "cat": {
-                 "task": "You can use the 'cat' command to read text from files. Why not check out the contents of sherlock.txt in this directory?",
+                 "task": "You can use the 'cat' command to read text from files. Why not check out the contents of sherlock.txt in this folder using:\n$ cat sherlock.txt",
                  "effects": {
                      "success": {
                          "reply": "Great! Now lets see what else we can do with this file.",
@@ -397,7 +397,7 @@
                  }
              },
              "cat_grep": {
-                 "task": "Sometimes (for big files) you might only want to see lines which have certain words in them. This is pretty common if you're seaching code for things. To filter out all lines which don't contain a particular word, you can use the 'grep' command. Try piping (|) the output of 'cat' on 'sherlock.txt' to grep and search for anything that talks about the year 1900 onwards (that means any word starting with 19).",
+                 "task": "Sometimes (for big files) you might only want to see lines which have certain words in them. This is pretty common if you're seaching code for things. To filter out all lines which don't contain a particular word, you can use the 'grep' command. Try piping (|) the output of 'cat' on 'sherlock.txt' to grep and search for anything that talks about the year 1900 onwards (that means any word starting with 19). Just like this:\n$ cat sherlock.txt | grep 19",
                  "effects": {
                      "success": {
                          "reply": "See how that makes the needles a lot easier to find in the haystack?",
@@ -409,7 +409,7 @@
                  }
              },
              "grep_file": {
-                 "task": "I lied. You don't actually have to pipe the output of 'cat' to 'grep' to search a file. You can just use 'grep' on the file directly. But I did show you the usefulness of 'streams' in the context of the shell. Why don't you try just using 'grep' directly on 'sherlock.txt' with the same query (everything to do with the 1900s).",
+                 "task": "You can also just use 'grep' on the file directly. Try it with the same query on 'sherlock.txt' (everything to do with the 1900s).",
                  "effects": {
                      "success": {
                          "reply": "Same result!",
@@ -433,14 +433,14 @@
                  }
              },
              "grep_all": {
-                 "task": "So now you can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it in the code/ directory. I'm looking for code that uses GSettings. You can search a directory by providing the `-R` option to grep. For instance, grep -R <expression> <directory>. Can you find me all the lines that use GSettings?",
+                 "task": "You can search one file for many things using regular expressions, but what about searching lots of files for one or more things? Well, `grep` allows you to search directories, which can be incredibly useful if you're trying to find files with certain words in them. Academy members do this with code all the time. Lets try it in the code/ folder. As an example, lets look for code that uses GSettings. You can search a folder by providing the `-R` option to grep. For instance, grep -R <expression> <folder>. Can you find me all the lines that use GSettings?",
                  "effects": {
                      "success": {
                          "reply": "Ah! Found them all! Thanks, that will be quite useful later on.",
                          "move_to": "grep_all_regex"
                      },
                      "failure": {
-                         "reply": "Not quite what I was expecting. Sure you searched just for GSettings?"
+                         "reply": "Not quite what I was expecting. Sure you searched just for GSettings? Try using:\n$ grep -R GSettings code"
                      }
                  }
              },
@@ -452,16 +452,19 @@
                          "move_to": "cat_atlas"
                      },
                      "failure": {
-                         "reply": "Oh c'mon, there's got to be way more than that!"
+                         "reply": "Oh c'mon, there's got to be way more than that! Try using:\n$ 'grep -R code/ ^\\s+G.*''"
                      }
                  }
              },
              "cat_atlas": {
-                 "task": "And now for something completely different. You can do some nifty processing with tabular data using the 'awk' utility. I've stored a file called 'atlas.txt' in the current directory. Lets have a look at it with 'cat'.",
+                 "task": "And now for something completely different - you can do some nifty processing with tabular data using the 'awk' utility. I've stored a file called 'atlas.txt' in the current folder. Lets have a look at it with 'cat'. Remember, to read a file, its just:\n$ cat atlas.txt",
                  "effects": {
                      "success": {
                          "reply": "There's some interesting information on countries here. But lets see what else we can do with it.",
                          "move_to": "awk_atlas"
+                     },
+                     "failure": {
+                         "reply": "Can you show me what 'atlas.txt' looks like first? Remember, its just:\n$ cat atlas.txt"
                      }
                  }
              },
@@ -473,36 +476,36 @@
                          "move_to": "awk_atlas_countries_sorted"
                      },
                      "failure": {
-                         "reply": "Hmm, I just wanted to see countries."
+                         "reply": "Hmm, I just wanted to see countries. They are in the first column. You can get everything in the first column by using the awk-expression '{ print $1 }' just like this:\ncat atlas.txt | awk '{ print $1 }'"
                      }
                  }
              },
              "awk_atlas_countries_sorted": {
-                 "task": "Lets say I wanted to see the same thing, but in sorted order? You can pipe to the 'sort' command sort the output.",
+                 "task": "Lets say I wanted to see the same thing, but in sorted order? You can pipe the output of 'awk' the 'sort' command sort the output. Remember, pipes are done using the (|) character. For instance: cat atlas.txt | awk '{ print $1 }' | sort",
                  "effects": {
                      "success": {
                          "reply": "And that's in sorted order as expected!",
                          "move_to": "awk_atlas_continents"
                      },
                      "failure": {
-                         "reply": "Hmm, I was expecting a sorted order. Can you do that for me?"
+                         "reply": "Hmm, I was expecting a sorted order. Can you do that for me? Remember that you can sort by piping to 'sort', so something like this will do here:\n$ cat atlas.txt | awk '{ print $1 }' | sort"
                      }
                  }
              },
              "awk_atlas_continents": {
-                 "task": "Lets just show continents. Do you remember what column they were? Try showing them with 'awk'.",
+                 "task": "Lets just show continents. Do you remember what column they were? Try showing them with 'awk'. If you're stuck, you can always read the file again using 'cat'",
                  "effects": {
                      "success": {
                          "reply": "Great, just the continents. But there's duplicates!",
                          "move_to": "awk_atlas_continents_uniq"
                      },
                      "failure": {
-                         "reply": "Hmm, I was just expecting continents. Did you print the right column?"
+                         "reply": "Hmm, I was just expecting continents. Did you print the right column? Remember that if you're selecting the second column, the awk-expression will be '{ print $2 }'"
                      }
                  }
              },
              "awk_atlas_continents_uniq": {
-                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the `uniq` utility will do that. Why don't you give that a try?",
+                 "task": "There is a way to remove those duplicates though! Piping to the `sort` and then to the `uniq` utility will do that. For 'uniq' to work, you'll need to pick the column, then sort the results, then pipe to uniq, in that order, just like this:\n$ cat atlas.txt | awk '{ print $1 }' | sort | uniq",
                  "effects": {
                      "success": {
                          "reply": "Great! So there are 5 continents in that file. Maybe there will be some more to come soon.",
@@ -515,7 +518,7 @@
                         ]
                      },
                      "failure": {
-                         "reply": "Almost there! I just need a sorted view of all the unique continents in that file."
+                         "reply": "Almost there! I just need a sorted view of all the unique continents in that file. Remember, for 'uniq' to work, you'll need to pick the column, then sort the results, then pipe to uniq, just like this:\n$ cat atlas.txt | awk '{ print $1 }' | sort | uniq"
                      }
                  }
              }
@@ -553,31 +556,31 @@
                  }
              },
              "ps_aux_grep": {
-                 "task": "Okay, now that we have every process running on the system, I wonder if we can find the process that is running me? My name is showmehow-service. Why don't you try connecting ps aux with 'grep' in order to find out some information about my process?",
+                 "task": "Okay, now that we have every process running on the system, I wonder if we can find the process that is running me? My name is showmehow-service. Why don't you try connecting 'ps aux' with 'grep' in order to find out some information about my process? Remember that you can pipe the output of anything to 'grep' to find lines containing certain words, characters and patterns. Just like:\n$ ps aux | grep <process-name>",
                  "effects": {
                      "success": {
                          "reply": "Yup, that's me.",
                          "move_to": "ps_aux_grep_awk"
                      },
                      "failure": {
-                         "reply": "I think I know what I look like and I didn't see myself in there. Remember that you can pipe the output of any command to 'grep' to find lines which match a pattern."
+                         "reply": "I think I know what I look like and I didn't see myself in there. Remember that you can pipe the output of any command to 'grep' to find lines which match a pattern. Just like:\n$ ps aux | grep <process-name>"
                      }
                  }
              },
              "ps_aux_grep_awk": {
-                 "task": "Now that you've got the line just showing me, see if you can just get my process id. Remember that the output of 'ps' is tabular, so you can use it with 'awk'. Remember that the process id is always in the second column of ps aux.",
+                 "task": "Now that you've got the line just showing me, see if you can just get my process id. Remember that the output of 'ps' is tabular, so you can use it with 'awk'. Remember that the process id is always in the second column of 'ps aux'. To select columns from tabular data using awk, remember that you can pipe (|) that data to awk and the awk-expression is '{ print $COLUMN }'",
                  "effects": {
                      "success": {
                          "reply": "Horray, a process id!",
                          "move_to": "view_proc_pid"
                      },
                      "failure": {
-                         "reply": "Are you sure that's my process id?"
+                         "reply": "Are you sure that's my process id? Run 'ps aux', then use grep to select a row containing my process-name (showmehow-service), then select the second column to show my process-id"
                      }
                  }
              },
              "view_proc_pid": {
-                 "task": "With my process id, you can view all the different information that Endless OS stores about me. All that information is actually stored in 'fake' files and folders on your system located at /proc/PID, where PID is the process ID of the process. Why don't you try running 'ls' on that directory and seeing what's there.",
+                 "task": "With my process id, you can view all the different information that Endless OS stores about me. All that information is actually stored in 'fake' files and folders on your system located at /proc/PID, where PID is the process ID of the process. Why don't you try running 'ls' on that folder and seeing what's there.",
                  "effects": {
                      "success": {
                          "reply": "Wow lots of information and I bet you don't even know where to start",
@@ -615,10 +618,10 @@
          "entry": "wget_image",
          "practice": {
              "wget_image": {
-                 "task": "If you just want to quickly download something and you know the URL, you can use wget to grab it and save the file to the current directory. Why don't you try using wget to download this image from the Endless website: https://endlessm.com/wp-content/uploads/2016/05/ourcomputers_hero-1.jpg",
+                 "task": "If you just want to quickly download something and you know the URL, you can use wget to grab it and save the file to the current folder. Why don't you try using wget to download this image from the Endless website: https://endlessm.com/wp-content/uploads/2016/05/ourcomputers_hero-1.jpg",
                  "effects": {
                      "success": {
-                         "reply": "Cool. Try checking out the image in your home directory. It should be there now.",
+                         "reply": "Cool. Try checking out the image in your home folder. It should be there now.",
                          "move_to": "api_pokemon"
                      },
                      "failure": {
