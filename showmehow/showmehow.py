@@ -11,6 +11,7 @@ import atexit
 import errno
 import json
 import os
+import re
 import readline
 import sys
 import textwrap
@@ -207,18 +208,11 @@ class PracticeTaskStateMachine(object):
 
         self._service = service
         self._coding_game_service = coding_game_service
-        self._lesson = lesson
-        self._lessons = lessons
-        self._task = task
-        self._current_input_desc = None
-        self._loop = GLib.MainLoop()
-        self._state = "fetching"
-        self._session = 0
-
         self._service.connect("lessons-changed", self.handle_lessons_changed)
-
-        # Display content for the entry point
-        self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
+        self._loop = GLib.MainLoop()
+        self._lessons = lessons
+        self._session = -1
+        self._initialize(lesson, task)
 
     def __enter__(self):
         """Enter the context of this PracticeTaskStateMachine.
@@ -241,6 +235,23 @@ class PracticeTaskStateMachine(object):
 
         if self._session != -1:
             self._session = self._service.call_close_session_sync(self._session, None)
+
+    def _initialize(self, lesson, task):
+        """Initialise the lesson state of showmehow and go to the first task."""
+        last_session = self._session
+
+        self._session = -1
+        self._lesson = lesson
+        self._task = task
+        self._state = "fetching"
+
+        # If we had a session open, close it and reopen one for this task
+        if last_session != -1:
+            self._service.call_close_session_sync(last_session, None)
+            self._session = self._service.call_open_session_sync(self._lesson, None)
+
+        # Display content for the entry point
+        self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
 
     def start(self):
         """Start the state machine and the underlying main loop."""
@@ -328,6 +339,23 @@ class PracticeTaskStateMachine(object):
         # If it is 'quit' or 'exit', exit showmehow
         if user_input in ('quit', 'exit'):
             self.quit()
+            return
+
+        # If the user types 'showmehow' and the lesson is not 'showmehow'
+        # then exit showmehow as well, but also print its usage. This will
+        # give the impression that we're going back to the top level
+        if user_input.strip() == "showmehow" and self._lesson != "showmehow":
+            show_response_scrolled("Having fun? You can do the following tasks:")
+            show_tasks(get_unlocked_tasks(self._lessons))
+            self.quit()
+            return
+
+        # If the user types 'showmehow X' we should go to that task.
+        if user_input.startswith("showmehow") and self._lesson != "showmehow":
+            _, requested_lesson = re.split(r"\s+", user_input, maxsplit=1)
+            lesson, task = find_task_or_report_error(get_unlocked_tasks(self._lessons),
+                                                     requested_lesson)
+            self._initialize(lesson, task)
             return
 
         # Submit this to the service and wait for the result
@@ -428,6 +456,49 @@ def print_banner():
           """\n\n""")
 
 
+def load_lessons():
+    """Load lessons from the specified JSON file."""
+    lessons_path = os.path.join(os.path.dirname(__file__), 'lessons.json')
+    with open(lessons_path) as lessons_stream:
+        return json.load(lessons_stream)
+
+
+def get_unlocked_tasks(lessons):
+    """Get available tasks."""
+    task_name_desc_pairs = {
+        l["name"]: l["desc"]
+        for l in lessons
+    }
+    task_name_entry_pairs = {
+        l["name"]: l["entry"]
+        for l in lessons
+    }
+
+    settings = Gio.Settings.new('com.endlessm.showmehow')
+    return [
+        [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
+        for t in settings.get_value('unlocked-lessons')
+    ]
+
+
+def find_task_or_report_error(unlocked_tasks, requested_task):
+    """Attempt to find requested_task in unlocked_tasks or report an error."""
+    try:
+        task, desc, entry = [
+            t for t in unlocked_tasks if t[0] == requested_task
+        ][0]
+        return (task, entry)
+    except IndexError:
+        if requested_task:
+            show_response_scrolled("I don't know how to do task {}".format(requested_task))
+        elif len(unlocked_tasks) == 0:
+            show_response_scrolled("I can't show you anything right now, sorry.")
+        else:
+            show_response_scrolled("Hey, how are you? I can tell you about the following tasks:")
+        show_tasks(unlocked_tasks)
+        return (None, None)
+
+
 def main(argv=None):
     """Entry point. Parse arguments and start the application."""
     parser = argparse.ArgumentParser('showmehow - Show me how to do things')
@@ -440,30 +511,14 @@ def main(argv=None):
                         help='Display list of known commands',
                         action='store_true')
     arguments = parser.parse_args(argv or sys.argv[1:])
-
-    lessons_path = os.path.join(os.path.dirname(__file__), 'lessons.json')
-    with open(lessons_path) as lessons_stream:
-        lessons = json.load(lessons_stream)
+    lessons = load_lessons()
 
     if os.environ.get("NONINTERACTIVE"):
         return noninteractive_predefined_script(arguments)
     else:
         service = create_service()
         coding_game_service = create_coding_game_service()
-        task_name_desc_pairs = {
-            l["name"]: l["desc"]
-            for l in lessons
-        }
-        task_name_entry_pairs = {
-            l["name"]: l["entry"]
-            for l in lessons
-        }
-
-        settings = Gio.Settings.new('com.endlessm.showmehow')
-        unlocked_tasks = [
-            [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
-            for t in settings.get_value('unlocked-lessons')
-        ]
+        unlocked_tasks = get_unlocked_tasks(lessons)
 
     if arguments.list:
         for t in unlocked_tasks:
@@ -474,18 +529,9 @@ def main(argv=None):
     if len(unlocked_tasks) != 0:
         print_banner()
 
-    try:
-        task, desc, entry = [
-            t for t in unlocked_tasks if t[0] == arguments.task
-        ][0]
-    except IndexError:
-        if arguments.task:
-            show_response_scrolled("I don't know how to do task {}".format(arguments.task))
-        elif len(unlocked_tasks) == 0:
-            show_response_scrolled("I can't show you anything right now, sorry.")
-        else:
-            show_response_scrolled("Hey, how are you? I can tell you about the following tasks:")
-        return show_tasks(unlocked_tasks)
+    task, entry = find_task_or_report_error(unlocked_tasks, arguments.task)
+    if not task or not entry:
+        return
 
     with PracticeTaskStateMachine(service, coding_game_service, lessons, task, entry) as machine:
         machine.start()
