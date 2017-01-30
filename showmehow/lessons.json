@@ -452,7 +452,7 @@
                          "move_to": "cat_atlas"
                      },
                      "failure": {
-                         "reply": "Oh c'mon, there's got to be way more than that! Try using:\n$ 'grep -R code/ ^\\s+G.*''"
+                         "reply": "Oh c'mon, there's got to be way more than that! Try using:\n$ grep -R -E G.+ code/"
                      }
                  }
              },
