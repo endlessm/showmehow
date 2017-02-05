@@ -1,9 +1,8 @@
 # /showmehow/showmehow.py
 #
-# showmehow - entrypoint
+# Copyright (c) 2016-2017 Endless Mobile Inc.
 #
-# Copyright (c) 2016 Endless Mobile Inc.
-# All rights reserved.
+# showmehow - entrypoint
 """Entry point for showmehow."""
 
 import argparse
