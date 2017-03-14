@@ -290,13 +290,7 @@
                 "effects": {
                     "success": {
                         "reply": "There are your files! Let's keep exploring.",
-                        "move_to": "list_child",
-                        "side_effects": [
-                            {
-                                "type": "event",
-                                "value": "showmehow-navigation-secondcmd"
-                            }
-                        ]
+                        "move_to": "list_child"
                     },
                     "failure": {
                         "reply": "That wasn't quite right. Make sure to enter just those two characters 'ls'."
