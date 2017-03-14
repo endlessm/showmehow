@@ -39,9 +39,9 @@
         }
     },
     {
-        "name": "joke",
+        "name": "fortune",
         "available_to": ["console"],
-        "desc": "Tell me a joke",
+        "desc": "Tell me a fortune or joke",
         "entry": "fortune",
         "practice": {
             "fortune": {
