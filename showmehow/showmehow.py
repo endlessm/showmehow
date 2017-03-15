@@ -493,6 +493,7 @@ def get_unlocked_tasks(lessons):
     return [
         [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
         for t in settings.get_value('unlocked-lessons')
+        if t in task_name_desc_pairs and t in task_name_entry_pairs
     ]
 
 
