@@ -97,7 +97,7 @@
                 "input": "console",
                 "effects": {
                     "success": {
-                        "reply": "Moo! You can read any file that is plain text using `cat`. Try it with files like /etc/resolv.conf. Anything that you can read can also be piped, so try piping to 'cowsay' too.",
+                        "reply": "Moo! You can read any file that is plain text using `cat`. Try it with files like /etc/hosts to see a part of your network configuration, or even /proc/cpuinfo to view some information about the Processor in your computer. Anything that you can read can also be piped, so try piping to 'cowsay' too.",
                         "completes_lesson": true
                     },
                     "failure": {
