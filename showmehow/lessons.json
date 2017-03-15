@@ -672,7 +672,25 @@
         "entry": "add_numbers",
         "practice": {
             "add_numbers": {
-                "task": "Arithmetic is understood in most programming languages like Python. Try assigning 'a' using the '=' operator to 4 + 7.",
+                "task": "Arithmetic is understood in most programming languages like Python. Try typing '4 + 7'.",
+                "effects": {
+                    "success": {
+                        "reply": "11 as expected!",
+                        "move_to": "add_numbers_assignment",
+                        "side_effects": [
+                            {
+                                "type": "event",
+                                "value": "showmehow-python-add-numbers"
+                            }
+                        ]
+                    },
+                    "failure": {
+                        "reply": "It is just simple arithmetic! Type '4 + 7'"
+                    }
+                }
+            },
+            "add_numbers_assignment": {
+                "task": "You can also assign the result of any expression to a variable. Try assigning 'a' using the '=' operator to 4 + 7.",
                 "effects": {
                     "success": {
                         "reply": "'a' is now 11!",
@@ -680,7 +698,7 @@
                         "side_effects": [
                             {
                                 "type": "event",
-                                "value": "showmehow-python-add-numbers"
+                                "value": "showmehow-python-add-numbers-assignment"
                             }
                         ]
                     },
