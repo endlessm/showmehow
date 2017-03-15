@@ -17,7 +17,7 @@ import sys
 import textwrap
 import time
 
-from collections import defaultdict
+from collections import (defaultdict, namedtuple)
 
 import gi
 
@@ -377,10 +377,26 @@ class PracticeTaskStateMachine(object):
         return True
 
 
+def print_name_detail_pair(task):
+    """Given a task tuple, print a name and detail pair."""
+    print("    [{task[0]}] - {task[1]}".format(task=task))
+
 def show_tasks(tasks):
     """Show tasks that can be done in the terminal."""
+    print_lines_slowly("For beginners:")
     for task in tasks:
-        print("[{task[0]}] - {task[1]}".format(task=task))
+        if task[3] == "beginner":
+            print_name_detail_pair(task)
+
+    print_lines_slowly("If you're a little more confident:")
+    for task in tasks:
+        if task[3] == "intermediate":
+            print_name_detail_pair(task)
+
+    print_lines_slowly("If you're ready for a challenge:")
+    for task in tasks:
+        if task[3] == "advanced":
+            print_name_detail_pair(task)
 
     print_lines_slowly("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ (without the quotation marks) and then hit enter.")
 
@@ -422,7 +438,9 @@ def noninteractive_predefined_script(arguments):
     """
     if not arguments.task:
         print("Hey, how are you? I can tell you about the following tasks:\n")
-        show_tasks([("showmehow", "Show me how to do things...", "showmehow")])
+        show_tasks([
+            ("showmehow", "Show me how to do things...", "showmehow", "beginner")
+        ])
     else:
         task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
         success_text = "That's right! Though now you need to tell showmehow what task you want to try. This is called an 'argument'. Try giving showmehow an argument so that it knows what to do. Want to know what argument to give it? There's only one, and it just told you what it was."
@@ -472,20 +490,23 @@ def load_lessons():
         return json.load(lessons_stream)
 
 
+UnlockedTaskDetail = namedtuple("UnlockedTaskDetail", "desc entry level")
+
 def get_unlocked_tasks(lessons):
     """Get available tasks."""
-    task_name_desc_pairs = {
-        l["name"]: l["desc"]
-        for l in lessons
-    }
-    task_name_entry_pairs = {
-        l["name"]: l["entry"]
+    task_name_detail_pairs = {
+        l["name"]: UnlockedTaskDetail(l["desc"], l["entry"], l["level"])
         for l in lessons
     }
 
     settings = Gio.Settings.new('com.endlessm.showmehow')
     return [
-        [t, task_name_desc_pairs[t], task_name_entry_pairs[t]]
+        [
+            t,
+            task_name_detail_pairs[t].desc,
+            task_name_detail_pairs[t].entry,
+            task_name_detail_pairs[t].level
+        ]
         for t in settings.get_value('unlocked-lessons')
     ]
 
@@ -493,7 +514,7 @@ def get_unlocked_tasks(lessons):
 def find_task_or_report_error(unlocked_tasks, requested_task):
     """Attempt to find requested_task in unlocked_tasks or report an error."""
     try:
-        task, desc, entry = [
+        task, desc, entry, level = [
             t for t in unlocked_tasks if t[0] == requested_task
         ][0]
         return (task, entry)
