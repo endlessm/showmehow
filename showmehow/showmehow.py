@@ -258,12 +258,19 @@ class PracticeTaskStateMachine(object):
             self._service.call_close_session_sync(last_session, None)
             self._session = self._service.call_open_session_sync(self._lesson, None)
 
-        # Display content for the entry point
-        self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
+            # Display content for the entry point
+            self._show_next_task()
+
+    def _show_next_task(self):
+        """Start the very first part of the state machine."""
+        self.handle_task_description_fetched(find_task_json(self._lessons,
+                                                            self._lesson,
+                                                            self._task))
 
     def start(self):
         """Start the state machine and the underlying main loop."""
         try:
+            GLib.idle_add(self._show_next_task)
             return self._loop.run()
         except KeyboardInterrupt:
             self.quit()
@@ -339,7 +346,7 @@ class PracticeTaskStateMachine(object):
         else:
             self._state = "fetching"
             self._task = next_task_id
-            self.handle_task_description_fetched(find_task_json(self._lessons, self._lesson, self._task))
+            self._show_next_task()
 
     def handle_user_input(self, user_input):
         """Handle user input from readline."""
