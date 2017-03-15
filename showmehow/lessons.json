@@ -39,9 +39,9 @@
         }
     },
     {
-        "name": "joke",
+        "name": "fortune",
         "available_to": ["console"],
-        "desc": "Tell me a joke",
+        "desc": "Tell me a fortune or joke",
         "entry": "fortune",
         "practice": {
             "fortune": {
@@ -57,7 +57,7 @@
                 }
             },
             "fortune_cowsay": {
-                "task": "In the shell, you can pipe (|) the output of commands around into other processes. One of these processes is 'cowsay'. See what happens when you try:\n    $ fortune | cowsay",
+                "task": "In terminal, add a pipe character ( | ) after a command connect the output of the first command to the input of the second. For example, type ‘fortune | cowsay’ then press Enter.",
                 "effects": {
                     "success": {
                         "reply": "Moo! Try some more jokes in the shell! You can keep running \n$ fortune | cowsay\nto get a different joke every time.",
