@@ -39,6 +39,14 @@ readline.parse_and_bind("tab: complete")
 
 _PAUSECHARS = ".?!:"
 
+
+def in_blue(text):
+    """Wrap text using ANSI blue color code."""
+    blue = '\033[95m'
+    end = '\033[0m'
+    return blue + text + end
+
+
 def print_lines_slowly(text, newline=True):
     """Print each character in the line to the standard output."""
     if os.environ.get("NONINTERACTIVE", None):
@@ -74,8 +82,7 @@ def show_wrapped_response(value):
     for paragraph in paragraphs:
         lines = textwrap.wrap(paragraph, width=68)
         for line in lines:
-            print("> " + line)
-        print(">")
+            print(line)
 
 
 class WaitTextFunctor(object):
@@ -91,7 +98,7 @@ class WaitTextFunctor(object):
         The wait time will decrease every time this method is called.
         """
         self._wait_time = max(self._wait_time - 1, 1)
-        print_message_slowly_and_wait(text, self._wait_time)
+        print_message_slowly_and_wait(in_blue(text), self._wait_time)
 
 
 def show_response_scrolled(value):
@@ -101,10 +108,10 @@ def show_response_scrolled(value):
     is to enable newlines to be printed correctly without extraneous whitespace
     on either side.
     """
-    print_lines_slowly("\n".join(itertools.chain.from_iterable([
+    print_lines_slowly(in_blue("\n".join(itertools.chain.from_iterable([
         textwrap.wrap(v)
         for v in value.splitlines()
-    ])))
+    ]))))
 
 def show_raw_response(value):
     """Print text as-is."""
@@ -396,22 +403,22 @@ def print_name_detail_pair(task):
 
 def show_tasks(tasks):
     """Show tasks that can be done in the terminal."""
-    print_lines_slowly("For beginners:")
+    print_lines_slowly(in_blue("For beginners:"))
     for task in tasks:
         if task[3] == "beginner":
             print_name_detail_pair(task)
 
-    print_lines_slowly("If you're a little more confident:")
+    print_lines_slowly(in_blue("If you're a little more confident:"))
     for task in tasks:
         if task[3] == "intermediate":
             print_name_detail_pair(task)
 
-    print_lines_slowly("If you're ready for a challenge:")
+    print_lines_slowly(in_blue("If you're ready for a challenge:"))
     for task in tasks:
         if task[3] == "advanced":
             print_name_detail_pair(task)
 
-    print_lines_slowly("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ (without the quotation marks) and then hit enter.")
+    print_lines_slowly(in_blue("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ (without the quotation marks) and then hit enter."))
 
 def create_service():
     """Create a ShowmehowService."""
