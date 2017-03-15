@@ -84,7 +84,7 @@
                 "input": "console",
                 "effects": {
                     "success":{
-                        "reply": "Notice anything familiar? This text file, stored in the /etc folder on your computer, says what operating system and what version you are using. Remember that you can use the 'ls <FOLDER>' command to show the contents of a folder on your system, which will show you what other files you might be able to read.",
+                        "reply": "Notice anything familiar? This text file, stored in the /etc folder on your computer, says what operating system and what version you are using. Remember that you can use the 'ls <FOLDER>' command to show the contents of a folder on your system, which will show you what other files you might be able to read. If you'd like more info, just type 'showmehow navigation'",
                         "move_to": "cat_cowsay"
                     },
                     "failure": {
