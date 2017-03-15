@@ -3,6 +3,7 @@
         "name": "showmehow",
         "desc": "Show me how to do things in this mysterious environment...",
         "entry": "showmehow",
+        "level": "beginner",
         "practice": {
             "showmehow": {
                 "task": "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens.",
@@ -43,6 +44,7 @@
         "available_to": ["console"],
         "desc": "Tell me a fortune or joke",
         "entry": "fortune",
+        "level": "beginner",
         "practice": {
             "fortune": {
                 "task": "'fortune' is a command that can tell you lots of things, including funny jokes.",
@@ -75,6 +77,7 @@
         "available_to": ["console"],
         "desc": "Read a file",
         "entry": "cat",
+        "level": "beginner",
         "practice": {
             "cat": {
                 "task": "You can read any text file stored on your computer in Terminal. The quickest way to do this is with the 'cat' command. 'cat' is short for con-CAT-enate, which adds the text in the file to the Terminal's output. An easy way to remember this is that the curious cat can read your files! Try running:\n$ cat /etc/os-release",
@@ -109,6 +112,7 @@
         "available_to": ["console"],
         "desc": "See how it's almost impossible to break Endless OS.",
         "entry": "breakit",
+        "level": "beginner",
         "practice": {
             "breakit": {
                 "task": "It's pretty difficult to break things using Terminal. Don't believe me? Try typing in some gibberish.",
@@ -141,6 +145,7 @@
         "available_to": ["console"],
         "desc": "Escape the terminal and tweak the OS",
         "entry": "gsettings",
+        "level": "advanced",
         "practice": {
             "gsettings": {
                 "task": "Settings for your computer can be controlled with the `gsettings` tool. Lets find out what you can do with `gsettings` by just running:\n$ gsettings.",
@@ -251,6 +256,7 @@
         "available_to": ["console"],
         "desc": "Play some music",
         "entry": "playsong",
+        "level": "advanced",
         "practice": {
             "playsong": {
                 "task": "Lets play some music. GStreamer is a framework that can be used to play all sorts of media files on your computer. For example Rhythmbox uses that. To play a music file, just use `gst-play-1.0 <music-file>`. You can find some music to play in the Music folder in your 'home'. 'gst' here refers to 'GStreamer'.",
@@ -272,6 +278,7 @@
         "requires_session": true,
         "desc": "Learn how to navigate the file system.",
         "entry": "change_to_root",
+        "level": "beginner",
         "practice": {
             "change_to_root": {
                 "task": "You're well on your way to mastering navigation of Endless OS through Terminal! How about we start from the top? To move to the 'root folder', the very highest folder in your system simply type 'cd /'. ",
@@ -383,6 +390,7 @@
          "requires_session": false,
          "desc": "Learn how to process and search through text files.",
          "entry": "cat",
+         "level": "intermediate",
          "practice": {
              "cat": {
                  "task": "You can use the 'cat' command to read text from files. Why not check out the contents of sherlock.txt in this folder using:\n$ cat sherlock.txt",
@@ -530,6 +538,7 @@
          "requires_session": false,
          "desc": "Get a birds eye view of what's running on your system",
          "entry": "ps",
+         "level": "advanced",
          "practice": {
              "ps": {
                  "task": "Ever wanted to know what processes are currently running on your computer? You can show a detailed view of everything using the 'ps' command",
@@ -616,6 +625,7 @@
          "desc": "Download stuff using the terminal",
          "available_to": ["console"],
          "entry": "wget_image",
+         "level": "advanced",
          "practice": {
              "wget_image": {
                  "task": "If you just want to quickly download something and you know the URL, you can use wget to grab it and save the file to the current folder. Why don't you try using wget to download this image from the Endless website: https://endlessm.com/wp-content/uploads/2016/05/ourcomputers_hero-1.jpg",
@@ -670,6 +680,7 @@
         "requires_session": true,
         "desc": "The basics of Python",
         "entry": "add_numbers",
+        "level": "intermediate",
         "practice": {
             "add_numbers": {
                 "task": "Arithmetic is understood in most programming languages, including Python. Try typing '4 + 7'.",
@@ -787,6 +798,7 @@
         "requires_session": true,
         "desc": "Working with lists in python",
         "entry": "convert_list",
+        "level": "advanced",
         "practice": {
             "convert_list": {
                 "task": "Python provides some really nifty utilities to convert lists of one thing into lists of another. This is really useful for when you're trying to convert data from one format to another. These utilities are called 'list comprehensions'. You can see more about the syntax of these on https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions. To try it out, I've created a list called 'numbers' and I want you to give me back a list of every number multiplied by 5, assigned to the value 'fives'.",
@@ -850,6 +862,7 @@
         "requires_session": true,
         "desc": "Using GObject-Introspection to interact with system libraries",
         "entry": "create_gi_binding",
+        "level": "advanced",
         "practice": {
             "create_gi_binding": {
                 "task": "On Endless OS there's a powerful framework called GObject-Introspection that allows you to interact with lots of different system components from many different languages. For instance, one of the components is called 'Gio'. 'Gio' can be imported from the namespace 'gi'. Try running 'from gi.repository import Gio'.",
