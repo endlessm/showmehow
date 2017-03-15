@@ -672,7 +672,7 @@
         "entry": "add_numbers",
         "practice": {
             "add_numbers": {
-                "task": "Arithmetic is understood in most programming languages like Python. Try typing '4 + 7'.",
+                "task": "Arithmetic is understood in most programming languages, including Python. Try typing '4 + 7'.",
                 "effects": {
                     "success": {
                         "reply": "11 as expected!",
@@ -685,7 +685,7 @@
                         ]
                     },
                     "failure": {
-                        "reply": "It is just simple arithmetic! Type '4 + 7'"
+                        "reply": "It is just simple arithmetic! Type '4 + 7'."
                     }
                 }
             },
