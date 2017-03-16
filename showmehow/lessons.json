@@ -148,10 +148,10 @@
         "level": "advanced",
         "practice": {
             "gsettings": {
-                "task": "Settings for your computer can be controlled with the `gsettings` tool. Lets find out what you can do with `gsettings` by just running:\n$ gsettings.",
+                "task": "Settings for your computer can be controlled with the `gsettings` tool. Lets find out what you can do with `gsettings` by just running:\n$ gsettings",
                 "effects": {
                     "success": {
-                        "reply": "The `gsettings` tool just told you about a bunch of `commands`. You can access these commands by providing the command name as an argument to `gsettings`.",
+                        "reply": "The `gsettings` tool just listed several commands. To use a command, provide it as an argument to `gsettings`. For example, 'gsettings list-schemas'.",
                         "move_to": "list_schemas"
                     },
                     "failure": {
