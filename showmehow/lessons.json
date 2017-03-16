@@ -184,38 +184,38 @@
                 }
             },
             "list_settings": {
-                "task": "Now that we know how to use list-keys, lets list all the settings available on the org.gnome.shell category, or 'schema', as it is called. Pipe it to `sort` to get them in alphabetical order.",
+                "task": "Now that we know how to use list-keys, lets list all the settings available on the org.gnome.desktop.interface category, or 'schema', as it is called. Pipe it to `sort` to get them in alphabetical order.",
                 "effects": {
                     "success": {
                         "reply": "Interesting.... I wonder what we can play around with here...",
-                        "move_to": "disable_social_bar"
+                        "move_to": "get_clock_format"
                     },
                     "failure": {
-                        "reply": "I want to know about the settings available for org.gnome.shell in sorted order? Can you list-keys on org.gnome.shell using gsettings and then pipe (|) the output to `sort`? Try:\n$ gsettings list-keys org.gnome.shell | sort"
+                        "reply": "I want to know about the settings available for org.gnome.desktop.interface in sorted order? Can you list-keys on org.gnome.desktop.interface using gsettings and then pipe (|) the output to `sort`? Try:\n$ gsettings list-keys org.gnome.desktop.interface | sort"
                     }
                 }
             },
-            "disable_social_bar": {
-                "task": "Lets disable the social bar! The social bar's setting is 'enable-social-bar' and it is a `boolean` setting, meaning it is either 'true' or 'false'. I checked `gsettings help set` for you and it said you can use the `set` command to change a setting with gsettings [--schemadir SCHEMADIR] set SCHEMA[:PATH] KEY VALUE. Your job is to provide KEY and VALUE, those being 'enable-social-bar' and 'false' to `gsettings set`.",
+            "get_clock_format": {
+                "task": "Let's learn how to change the clock format using 'gsettings'. The two avaliable formats are '12h' or '24h'. Lets start by finding out what format is set in the 'clock-format' key, by using the `get` command. The format should be the following. `gsettings get <our-schema> <clock-schema-key>`.",
                 "effects": {
                     "success": {
-                        "reply": "There we go! No Facebook icon!",
-                        "move_to": "enable_social_bar"
+                        "reply": "That's the current clock format on this machine.",
+                        "move_to": "change_clock_format"
                     },
                     "failure": {
-                        "reply": "Hmm, I thought you'd change the value of org.gnome.shell e'enable-social-bar' to false, but it is still true. Remember to change a gsettings value you can use:\n$ gsettings set KEY VALUE"
+                        "reply": "That's not what we want. Try replacing '<our schema>' with 'org.gnome.desktop.interface' and <clock-schema-key> with 'clock-format' in the following command `gsettings get <our-schema> <clock-schema-key>`."
                     }
                 }
             },
-            "enable_social_bar": {
-                "task": "Now lets change it back to true",
+            "change_clock_format": {
+                "task": "Now lets flip the 'clock-format' to the other one. This is done in the same way as we just did to view the current clock format, but instead we will be using the 'set' command. Like this `gsettings set <our-schema> <clock-schema-key> '<clock-format>'`",
                 "effects": {
                     "success": {
-                        "reply": "Okay, phew, Facebook is back",
+                        "reply": "Success! Look at the clock in the right corner of your screen, the format changed! You can also have a look at the chatbox application, and you might notice that the timestamp format of the messages is different there as well. Amazing what a little bit of text can do, right?",
                         "move_to": "add_terminal_pinned_help"
                     },
                     "failure": {
-                        "reply": "Quick! I need Facebook to come back! Change 'enable-social-bar' on org.gnome.shell back to 'true'!"
+                        "reply": "Hmm not quite right. Lets try again. Your command should end up looking something similar to this: `gsettings set <our-schema> <clock-schema-key> '24h'`"
                     }
                 }
             },
