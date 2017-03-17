@@ -130,7 +130,7 @@
                 "task": "Gibberish again. Nothing bad will happen, I promise!",
                 "effects": {
                     "success": {
-                        "reply": "See? Harmless. Don't be afraid to try new things. You can either keep typing gibberish or you can enter 'showmehow' to head back to the main menu.",
+                        "reply": "See? Harmless. Don't be afraid to try new things. You can either keep typing gibberish or you can type 'showmehow' to head back to the top-level of this tutorial.",
                         "completes_lesson": true
                     },
                     "failure": {
