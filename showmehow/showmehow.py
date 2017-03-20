@@ -265,9 +265,6 @@ class PracticeTaskStateMachine(object):
             self._service.call_close_session_sync(last_session, None)
             self._session = self._service.call_open_session_sync(self._lesson, None)
 
-            # Display content for the entry point
-            self._show_next_task()
-
     def _show_next_task(self):
         """Start the very first part of the state machine."""
         self.handle_task_description_fetched(find_task_json(self._lessons,
@@ -384,6 +381,9 @@ class PracticeTaskStateMachine(object):
             lesson, task = find_task_or_report_error(get_unlocked_tasks(self._lessons),
                                                      requested_lesson)
             self._initialize(lesson, task)
+
+            # Display content for the entry point
+            self._show_next_task()
             return
 
         # Submit this to the service and wait for the result
