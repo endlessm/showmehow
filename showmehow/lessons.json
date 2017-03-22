@@ -211,7 +211,7 @@
                 "task": "Now lets flip the 'clock-format' to the other one. This is done in the same way as we just did to view the current clock format, but instead we will be using the 'set' command. Like this `gsettings set <our-schema> <clock-schema-key> '<clock-format>'`",
                 "effects": {
                     "success": {
-                        "reply": "Success! Look at the clock in the right corner of your screen, the format changed! You can also have a look at the chatbox application, and you might notice that the timestamp format of the messages is different there as well. Amazing what a little bit of text can do, right?",
+                        "reply": "Success! Look at the clock in the right corner of your screen, the format changed! You can also have a look at the ChatBox application, and you might notice that the timestamp format of the messages has changed there as well. Amazing what a little bit of text can do, right?",
                         "move_to": "add_terminal_pinned_help"
                     },
                     "failure": {
