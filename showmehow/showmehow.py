@@ -75,14 +75,9 @@ def print_message_slowly_and_wait(message, wait_time=2):
     print("")
 
 
-def show_wrapped_response(value):
-    """Print wrapped text, quickly."""
-    # Preserve paragraphs in original text
-    paragraphs = value.split("\n\n")
-    for paragraph in paragraphs:
-        lines = textwrap.wrap(paragraph, width=68)
-        for line in lines:
-            print(line)
+def show_response(value):
+    """Print text, quickly."""
+    print(value)
 
 
 class WaitTextFunctor(object):
@@ -108,21 +103,14 @@ def show_response_scrolled(value):
     is to enable newlines to be printed correctly without extraneous whitespace
     on either side.
     """
-    print_lines_slowly(in_blue("\n".join(itertools.chain.from_iterable([
-        textwrap.wrap(v)
-        for v in value.splitlines()
-    ]))))
-
-def show_raw_response(value):
-    """Print text as-is."""
-    print(value)
+    print_lines_slowly(in_blue(value))
 
 
 _RESPONSE_ACTIONS = {
-    "raw": show_raw_response,
-    "scrolled": show_response_scrolled,
+    "raw": show_response,
+    "scrolled": print_lines_slowly,
     "scroll_wait": WaitTextFunctor(),
-    "wrapped": show_wrapped_response
+    "wrapped": show_response
 }
 
 
