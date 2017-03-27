@@ -441,7 +441,7 @@ def noninteractive_predefined_script(arguments):
     If no arguments are given, show a mock response for what unlocked_tasks
     would be.
 
-    If an argument is given, show a mock response for what "showmehow showmehow"
+    If an argument is given, show a mock response for what "showmehow info"
     would do.
 
     The reason we have this is that we cannot connect to the service
@@ -451,7 +451,7 @@ def noninteractive_predefined_script(arguments):
     if not arguments.task:
         print("Hey, how are you? I can tell you about the following tasks:\n")
         show_tasks([
-            ("showmehow", "Show me how to do things...", "showmehow", "beginner")
+            ("info", "Show me how to do things...", "info", "beginner")
         ])
     else:
         task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
