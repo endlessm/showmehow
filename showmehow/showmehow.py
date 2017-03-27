@@ -42,6 +42,9 @@ _PAUSECHARS = ".?!:"
 
 def in_blue(text):
     """Wrap text using ANSI blue color code."""
+    if not sys.stdout.isatty():
+        return text
+
     blue = '\033[95m'
     end = '\033[0m'
     return blue + text + end
