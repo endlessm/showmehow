@@ -419,7 +419,7 @@ def show_tasks(tasks):
         if task[3] == "advanced":
             print_name_detail_pair(task)
 
-    print_lines_slowly(in_blue("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ (without the quotation marks) and then hit enter."))
+    print_lines_slowly(in_blue("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ or 'showmehow navigation' (without the quotation marks) and then hit enter."))
 
 def create_service():
     """Create a ShowmehowService."""
