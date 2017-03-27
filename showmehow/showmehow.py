@@ -338,13 +338,14 @@ class PracticeTaskStateMachine(object):
         for side_effect in side_effects:
             dispatch_side_effect(side_effect, self._coding_game_service)
 
+        # Regardless of what the lesson is, fire this event so that
+        # the game service can know that *a* task completed.
+        dispatch_side_effect({
+            "type": "event",
+            "value": "showmehow-task-completed"
+        }, self._coding_game_service)
+
         if completes_lesson:
-            # Regardless of what the lesson is, fire this event so that
-            # the game service can know that *a* lesson completed.
-            dispatch_side_effect({
-                "type": "event",
-                "value": "showmehow-lesson-completed"
-            }, self._coding_game_service)
             self._loop.quit()
         elif next_task_id == self._task:
             self._state = "waiting"
