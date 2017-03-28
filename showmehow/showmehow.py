@@ -450,9 +450,7 @@ def noninteractive_predefined_script(arguments):
     """
     if not arguments.task:
         print("Hey, how are you? I can tell you about the following tasks:\n")
-        show_tasks([
-            ("info", "Show me how to do things...", "info", "beginner")
-        ])
+        show_tasks(get_unlocked_tasks(load_lessons()))
     else:
         task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
         success_text = "You can run any of those tasks at anytime, simply enter the showmehow command followed by the task name. This is called an 'argument'. An 'argument' comes after the program name. The program will read them to determine what to do. For example, you could type ‘showmehow breakit’ or 'showmehow navigation' (without the quotation marks) and then hit enter. Try this: 'showmehow breakit'."
