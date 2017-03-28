@@ -370,14 +370,14 @@ class PracticeTaskStateMachine(object):
         # If the user types 'showmehow' and the lesson is not 'showmehow'
         # then exit showmehow as well, but also print its usage. This will
         # give the impression that we're going back to the top level
-        if user_input.strip() == "showmehow" and self._lesson != "showmehow":
+        if user_input.strip() == "showmehow" and self._lesson != "info":
             show_response_scrolled("Having fun? You can do the following tasks:")
             show_tasks(get_unlocked_tasks(self._lessons))
             self.quit()
             return
 
         # If the user types 'showmehow X' we should go to that task.
-        if user_input.startswith("showmehow") and self._lesson != "showmehow":
+        if user_input.startswith("showmehow") and self._lesson != "info":
             _, requested_lesson = re.split(r"\s+", user_input, maxsplit=1)
             lesson, task = find_task_or_report_error(get_unlocked_tasks(self._lessons),
                                                      requested_lesson)

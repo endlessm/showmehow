@@ -2,7 +2,7 @@
 <schemalist>
   <schema path="/com/endlessm/showmehow/" id="com.endlessm.showmehow">
     <key name='unlocked-lessons' type='as'>
-      <default>['showmehow', 'fortune', 'readfile', 'breakit', 'changesetting', 'navigation', 'text', 'ps', 'python']</default>
+      <default>['info', 'fortune', 'readfile', 'breakit', 'changesetting', 'navigation', 'text', 'ps', 'python']</default>
       <summary>Unlocked lessons</summary>
       <description>
         Lessons which have been unlocked and are available to the user.

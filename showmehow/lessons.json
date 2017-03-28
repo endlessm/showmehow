@@ -1,6 +1,6 @@
 [
     {
-        "name": "showmehow",
+        "name": "info",
         "desc": "Show me how to do things in this mysterious environment...",
         "entry": "showmehow",
         "level": "beginner",
@@ -18,7 +18,7 @@
                 }
             },
             "showmehow_argument": {
-                "task": "Try this: 'showmehow showmehow'.",
+                "task": "Try this: 'showmehow info'.",
                 "input": "console",
                 "effects": {
                     "success": {
@@ -33,7 +33,7 @@
 
                     },
                     "failure": {
-                        "reply": "Hmmm. I want to know what happens when you ask how to use 'showmehow'. Try this exactly: 'showmehow showmehow'"
+                        "reply": "Hmmm. I want to know what happens when you ask how to use 'showmehow'. Try this exactly: 'showmehow info'"
                     }
                 }
             }
