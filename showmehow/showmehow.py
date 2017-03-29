@@ -42,6 +42,9 @@ _PAUSECHARS = ".?!:"
 
 def in_blue(text):
     """Wrap text using ANSI blue color code."""
+    if not sys.stdout.isatty():
+        return text
+
     blue = '\033[95m'
     end = '\033[0m'
     return blue + text + end
@@ -75,14 +78,9 @@ def print_message_slowly_and_wait(message, wait_time=2):
     print("")
 
 
-def show_wrapped_response(value):
-    """Print wrapped text, quickly."""
-    # Preserve paragraphs in original text
-    paragraphs = value.split("\n\n")
-    for paragraph in paragraphs:
-        lines = textwrap.wrap(paragraph, width=68)
-        for line in lines:
-            print(line)
+def show_response(value):
+    """Print text, quickly."""
+    print(value)
 
 
 class WaitTextFunctor(object):
@@ -108,21 +106,14 @@ def show_response_scrolled(value):
     is to enable newlines to be printed correctly without extraneous whitespace
     on either side.
     """
-    print_lines_slowly(in_blue("\n".join(itertools.chain.from_iterable([
-        textwrap.wrap(v)
-        for v in value.splitlines()
-    ]))))
-
-def show_raw_response(value):
-    """Print text as-is."""
-    print(value)
+    print_lines_slowly(in_blue(value))
 
 
 _RESPONSE_ACTIONS = {
-    "raw": show_raw_response,
-    "scrolled": show_response_scrolled,
+    "raw": show_response,
+    "scrolled": print_lines_slowly,
     "scroll_wait": WaitTextFunctor(),
-    "wrapped": show_wrapped_response
+    "wrapped": show_response
 }
 
 
@@ -419,7 +410,7 @@ def show_tasks(tasks):
         if task[3] == "advanced":
             print_name_detail_pair(task)
 
-    print_lines_slowly(in_blue("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ (without the quotation marks) and then hit enter."))
+    print_lines_slowly(in_blue("To run any of these lessons, simply enter the command’s name. For example, you could type ‘showmehow breakit’ or 'showmehow navigation' (without the quotation marks) and then hit enter."))
 
 def create_service():
     """Create a ShowmehowService."""
@@ -450,7 +441,7 @@ def noninteractive_predefined_script(arguments):
     If no arguments are given, show a mock response for what unlocked_tasks
     would be.
 
-    If an argument is given, show a mock response for what "showmehow showmehow"
+    If an argument is given, show a mock response for what "showmehow info"
     would do.
 
     The reason we have this is that we cannot connect to the service
@@ -460,7 +451,7 @@ def noninteractive_predefined_script(arguments):
     if not arguments.task:
         print("Hey, how are you? I can tell you about the following tasks:\n")
         show_tasks([
-            ("showmehow", "Show me how to do things...", "showmehow", "beginner")
+            ("info", "Show me how to do things...", "info", "beginner")
         ])
     else:
         task_desc = "'showmehow' is a command that you can type, just like any other command. Try typing it and see what happens."
