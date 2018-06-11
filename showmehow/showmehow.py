@@ -416,8 +416,8 @@ def create_service():
     """Create a ShowmehowService."""
     service = Showmehow.ServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
                                                       0,
-                                                      "com.endlessm.Showmehow.Service",
-                                                      "/com/endlessm/Showmehow/Service")
+                                                      "com.endlessm.ShowmehowService",
+                                                      "/com/endlessm/ShowmehowService")
     # Display any warnings that came through from the service.
     for warning in service.call_get_warnings_sync():
         sys.stderr.write("Service warning: {}\n".format(warning[0]))
@@ -429,8 +429,8 @@ def create_coding_game_service():
     """Create a CodingGameService Proxy instance."""
     return CodingGameService.CodingGameServiceProxy.new_for_bus_sync(Gio.BusType.SESSION,
                                                                      0,
-                                                                     "com.endlessm.CodingGameService.Service",
-                                                                     "/com/endlessm/CodingGameService/Service")
+                                                                     "com.endlessm.CodingGameService",
+                                                                     "/com/endlessm/CodingGameService")
 
 def noninteractive_predefined_script(arguments):
     """Script to follow if we are non-interactive.
