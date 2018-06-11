@@ -1,0 +1,4 @@
+#!/bin/bash
+#
+# A simple wrapper script to run the showmehow flatpak
+flatpak run com.endlessm.Showmehow $@

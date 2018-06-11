@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# A simple wrapper script to run the showmehow flatpak
+# with the command "remindmehow"
+flatpak run --command=/app/bin/remindmehow com.endlessm.Showmehow $@

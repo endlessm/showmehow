@@ -2,50 +2,17 @@ Source: showmehow
 Maintainer: Sam Spilsbury <sam@endlessm.com>
 Section: python
 Priority: optional
-Build-Depends: python-setuptools (>= 0.6b3),
-               python3-setuptools,
-               python-all (>= 2.6.6-3),
-               python3-all,
-               debhelper (>= 7.4.3)
+Build-Depends: debhelper (>= 7.4.3)
 Standards-Version: 3.9.1
 
 
-
-Package: python-showmehow
+Package: showmehow-os-integration
 Architecture: all
-Depends: python-gi,
-         libshowmehow-service-0,
-         gir1.2-showmehow-service-0,
-         showmehow-data (= ${binary:Version}),
-         ${misc:Depends},
-         ${python:Depends}
-Conflicts: python3-showmehow
-Description: Show a user how to do something in the terminal.
- Show a user how to do something in the terminal.
-
-
-
-Package: python3-showmehow
-Architecture: all
-Depends: python3-gi,
-         libshowmehow-service-0,
-         gir1.2-coding-game-service-0,
-         gir1.2-showmehow-service-0,
-         showmehow-data (= ${binary:Version}),
-         ${misc:Depends},
-         ${python3:Depends}
-Conflicts: python-showmehow
-Description: Show a user how to do something in the terminal.
- Show a user how to do something in the terminal.
-
-
-
-Package: showmehow-data
-Architecture: all
-Depends: ${misc:Depends}
-Replaces: python3-showmehow (<= 0.0.0+dev87.34e493ebem1),
-          python-showmehow (<= 0.0.0+dev87.34e493ebem1)
-Breaks: python3-showmehow (<= 0.0.0+dev87.34e493ebem1),
-        python-showmehow (<= 0.0.0+dev87.34e493ebem1)
-Description: Common data for showmehow command.
- Common data for showmehow command.
+Replaces: python3-showmehow (<< 0.0.0+dev205.aec5254bem1),
+          python-showmehow (<< 0.0.0+dev205.aec5254bem1),
+          showmehow-data (<< 0.0.0+dev205.aec5254bem1)
+Breaks: python3-showmehow (<< 0.0.0+dev205.aec5254bem1),
+        python-showmehow (<< 0.0.0+dev205.aec5254bem1),
+        showmehow-data (<< 0.0.0+dev205.aec5254bem1)
+Description: OS Integration for showmehow command.
+ OS Integration for showmehow command.

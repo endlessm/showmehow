@@ -1,0 +1,3 @@
+completion/showmehow usr/share/bash-completion/completions/
+bin/showmehow usr/bin/
+bin/remindmehow usr/bin/
