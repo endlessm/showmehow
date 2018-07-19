@@ -2,7 +2,8 @@ Source: showmehow
 Maintainer: Sam Spilsbury <sam@endlessm.com>
 Section: python
 Priority: optional
-Build-Depends: debhelper (>= 7.4.3)
+Build-Depends: debhelper (>= 7.4.3),
+               python3-setuptools
 Standards-Version: 3.9.1
 
 
